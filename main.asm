@@ -36,7 +36,8 @@
 ; =========== RAM ============
 
 			.dseg
-test4:		.byte 2
+			.org SRAM_START
+var_S0:		.byte 2
 
 ; ========== CODE ============
 
@@ -48,34 +49,18 @@ main:
 ;			<- main stack | return stack -> ... RAMEND|
 			ldi		r16, low(RAMEND-RSTACK_SIZE-1)
 			out		SPL, r16
+			sts		var_S0, r16
 			ldi		r16, high(RAMEND-RSTACK_SIZE-1)
 			out		SPH, r16
+			sts		var_S0+1, r16
 			ldi		XL, low(RAMEND-RSTACK_SIZE)
 			ldi		XH, high(RAMEND-RSTACK_SIZE)
 
-test1:		nop
-			ldi		codePtrL, low(test2*2)
-			ldi		codePtrH, high(test2*2)
-			ldi		r16, FLAG_IS_CORE_WORD
-			mov		isCoreWord, r16
-			rcall	CODE_DOCOL_CORE
-			ldi		codePtrL, low(test4)
-			ldi		codePtrH, high(test4)
-			ldi		r16, 0
-			mov		isCoreWord, r16
-			rcall	CODE_EXIT			
-			ldi		r16, low(test5)
-			sts		test4, r16
-			ldi		r16, high(test5)
-			sts		test4+1, r16
 			nop
-test3:		nop
-			nop
-test5:		nop
-			nop
-			nop
-			rjmp	NEXT
-			nop
+
+			.include "asmwords.asm"
+;			.include "forthwords.asm"
+			.include "asmcodes.asm"
 
 
 NEXT:		movw	ZL, codePtrL		; Z = codePtr
@@ -99,8 +84,7 @@ CODE_DOCOL_CORE:
 			movw CodePtrL, ZL			; CodePtr = Z
 			ldi r16, FLAG_IS_CORE_WORD	; wordIsCore = true
 			mov isCoreWord, r16
-;			NEXT
-			ret
+			rjmp NEXT
 
 
 CODE_EXIT:	RPop [CodePtrL:CodePtrH]
@@ -108,8 +92,4 @@ CODE_EXIT:	RPop [CodePtrL:CodePtrH]
 			andi CodePtrH, 0b01111111
 			andi r16, 0b10000000
 			mov isCoreWord, r16
-;			NEXT
-			ret
-
-			.org	0x7F
-test2:		.dw		test3
+			rjmp NEXT
