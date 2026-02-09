@@ -96,9 +96,9 @@ CODE_DOCOL_CORE:
 			or r16, isCoreWord
 			RPush [CodePtrL:r16]
 			adiw ZL, 2					; Z += 2
-			movw CodePtr, ZL			; CodePtr = Z
+			movw CodePtrL, ZL			; CodePtr = Z
 			ldi r16, FLAG_IS_CORE_WORD	; wordIsCore = true
-			mov wordIsCore, r16
+			mov isCoreWord, r16
 ;			NEXT
 			ret
 
