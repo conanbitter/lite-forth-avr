@@ -59,6 +59,8 @@ main:
 			nop
 
 			.include "asmwords.asm"
+;			.include "constwords.asm"
+;			.include "varwords.asm"
 ;			.include "forthwords.asm"
 			.include "asmcodes.asm"
 
