@@ -1,0 +1,1 @@
+avra -fO -I "..\tools\avra\includes" -I "src" -o "bin\lfa.hex" -l "bin\lfa.lst" -m "bin\lfa.map" "src\main.asm"

@@ -10,7 +10,7 @@
 			.def	codePtrL   = r24
 			.def	codePtrH   = r25
 
-			.equ	RSTACK_SIZE = 32 * 2
+			.equ	RSTACK_SIZE       = 32 * 2
 			.equ	FLAG_IS_CORE_WORD = 0b10000000
 
 ; ========== MACROS ==========
@@ -38,6 +38,7 @@
 			.dseg
 			.org SRAM_START
 var_S0:		.byte 2
+			.include "uart_head.asm"
 
 ; ========== CODE ============
 
@@ -55,6 +56,12 @@ main:
 			sts		var_S0+1, r16
 			ldi		XL, low(RAMEND-RSTACK_SIZE)
 			ldi		XH, high(RAMEND-RSTACK_SIZE)
+
+			rcall	uartInit
+;			uartMsg	LOGO_MSG
+			rcall	uartGetc
+			rcall	uartGetc
+loop:		rjmp	loop			
 
 			nop
 
@@ -95,3 +102,7 @@ CODE_EXIT:	RPop [CodePtrL:CodePtrH]
 			andi r16, 0b10000000
 			mov isCoreWord, r16
 			rjmp NEXT
+
+			.include "uart_body.asm"
+
+LOGO_MSG:	.db "LITE [ FORTH ] AVR v0.1 (build  %DAY%.%MONTH%.%YEAR% %HOUR%:%MINUTE% m328p)", 0
