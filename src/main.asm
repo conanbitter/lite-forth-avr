@@ -58,7 +58,7 @@ main:
 			ldi		XH, high(RAMEND-RSTACK_SIZE)
 
 			rcall	uartInit
-;			uartMsg	LOGO_MSG
+			uartMsg	LOGO_MSG
 			rcall	uartGetc
 			rcall	uartGetc
 loop:		rjmp	loop			
@@ -69,6 +69,7 @@ loop:		rjmp	loop
 ;			.include "constwords.asm"
 ;			.include "varwords.asm"
 ;			.include "forthwords.asm"
+			.include "division.asm"
 			.include "asmcodes.asm"
 
 
