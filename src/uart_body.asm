@@ -16,8 +16,8 @@ uartInit:	ldi		r16, 0
 			ret
 
 ; R16 = getc()
-uartGetc:	ldi		XL, low(uart_buf)
-			ldi		XH, high(uart_buf)
+uartGetc:	ldi		YL, low(uart_buf)
+			ldi		YH, high(uart_buf)
 			
 			lds		r16, uart_empty
 			tst		r16
@@ -31,7 +31,7 @@ uartgc_loop:
 			rjmp	uartgc_loop
 			
 			lds		r18, UDR0
-			st		X+, r18
+			st		Y+, r18
 			inc		r16
 			cpi		r18, 0x0D ; is '\n'
 			breq	uartgc_endloop
@@ -40,22 +40,22 @@ uartgc_loop:
 			rjmp	uartgc_loop
 uartgc_endloop:
 			clr		r17
-			st		X, r17
+			st		Y, r17
 			sts		uart_empty, r17
-			ldi		XL, low(uart_buf)
-			ldi		XH, high(uart_buf)
+			ldi		YL, low(uart_buf)
+			ldi		YH, high(uart_buf)
 			rjmp	uartgc_load_next
 			
 			; buffer is not empty, get next char
 uartgc_not_empty:
 			lds		r17, uart_caret
 			clr		r18
-			add		XL, r17
-			adc		XH, r18
+			add		YL, r17
+			adc		YH, r18
 			
 uartgc_load_next:
-			ld		r16, X+
-			ld		r18, X
+			ld		r16, Y+
+			ld		r18, Y
 			tst		r18
 			breq	uartgc_became_empty
 			inc		r17
