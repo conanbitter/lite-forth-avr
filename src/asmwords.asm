@@ -7,8 +7,6 @@
 
 ; name is padded with ", 0" to even number of bytes
 
-			.equ LAST_CORE = WORD_NEQ
-
 WORD_DROP:	.dw	0
 			.db 4, "DROP", 4
 DROP:		.dw CODE_DROP
@@ -107,6 +105,8 @@ EQ:			.dw CODE_EQ
 WORD_NEQ:	.dw WORD_EQ *2
 			.db 2, "<>", 2
 NEQ:		.dw CODE_NEQ
+
+			.equ LAST_CORE = WORD_NEQ
 
 ;TODO
 ;*
