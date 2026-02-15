@@ -65,7 +65,8 @@ uartgc_became_empty:
 			ldi		r18, 1
 			sts		uart_empty, r18			
 			ret
-			
+
+
 ; uartPutC(R16)
 uartPutc:	lds		r17, UCSR0A
 			sbrs	r17, UDRE0
@@ -73,7 +74,8 @@ uartPutc:	lds		r17, UCSR0A
 			
 			sts		UDR0, r16
 			ret
-			
+
+
 ; uartSendPm(Z)
 uartSendPm:	lpm		r16, Z+
 			tst		r16
@@ -87,3 +89,18 @@ uartm_wait:	lds		r17, UCSR0A
 			rjmp	uartSendPm
 			
 uartm_end:	ret
+
+
+; uartSend(Z)
+uartSend:	ld		r16, Z+
+			tst		r16
+			breq	uarts_end
+			
+uarts_wait:	lds		r17, UCSR0A
+			sbrs	r17, UDRE0
+			rjmp	uarts_wait
+			
+			sts		UDR0, r16
+			rjmp	uartSend
+			
+uarts_end:	ret

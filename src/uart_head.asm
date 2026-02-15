@@ -13,3 +13,10 @@ uart_empty: .byte	1
 			ldi		ZH, high(@0*2)
 			rcall	uartSendPm
             .endm
+
+; uartStr(msg)
+            .macro  uartStr
+            ldi		ZL, low(@0*2)
+			ldi		ZH, high(@0*2)
+			rcall	uartSend
+            .endm
