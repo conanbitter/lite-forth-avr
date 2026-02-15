@@ -64,9 +64,9 @@ main:
 
 			nop
 
-			ldi		r16, low(5869)
-			ldi		r17, high(5869)
-			rcall	div16_by10u
+			ldi		r16, low(6553)
+			ldi		r17, high(6553)
+			rcall	mul16_by10u
 
 loop:		rjmp	loop
 

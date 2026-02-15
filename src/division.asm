@@ -144,3 +144,21 @@ div16_by10u:
 			sub		d10rem, d10tmpL
     		
 			ret
+
+
+			.def	m10in16L  = r16
+			.def	m10in16H  = r17
+			.def	m10out16L = r18
+			.def	m10out16H = r19
+			.def	m10tmp    = r20
+
+; [r19:r18] = [r17:r16] * 10
+; use R20
+mul16_by10u:
+			ldi		m10tmp, 10
+			mul		m10in16L, r20
+			movw	m10out16L, r0
+			mul		m10in16H, r20
+			add		m10out16H, r0
+
+			ret
