@@ -18,6 +18,39 @@
 			.def	DL = r14
 			.def	DH = r15
 
+			; ( -- char )
+CODE_KEY:	rcall	_KEY
+			clr		AH
+
+			push	AH
+			push	AL
+
+			rjmp	NEXT
+
+
+			; ( char -- )
+CODE_EMIT:	pop		AL
+			pop		AH
+			rcall	_EMIT
+
+			rjmp	NEXT
+
+
+			; ( -- *char len:u16 )
+CODE_WORD:	rcall	getWord
+
+			ldi		AH, high(word_buffer)
+			ldi		AL, low(word_buffer)
+			push	AH
+			push	AL
+
+			clr		AL
+			push	AL
+			push	r19
+
+			rjmp	NEXT
+
+
 			; ( n -- )
 CODE_DROP:	pop		AL
 			pop		AL
