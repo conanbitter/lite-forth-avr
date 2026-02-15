@@ -7,6 +7,9 @@ uart_buf:	.byte	UART_BUFFER_SIZE
 uart_caret:	.byte	1
 uart_empty: .byte	1
 
+
+;================== uartMsg
+
 ; uartMsg(msg)
             .macro  uartMsg
             ldi		ZL, low(@0*2)

@@ -1,3 +1,5 @@
+;================== printVal
+
 			.def	prvTmp   = r22
 			.def	prvSign  = r23
 			.def	prvInL   = r16
@@ -6,8 +8,8 @@
 			.def	prvDivH  = r19
 			.def	prvRem   = r22
 
-; printVal([r17:r16])
-; use r18, r19, r20, r21, r22, r23
+; printVal([R17:R16])
+; uses R18, R19, R20, R21, R22, R23
 printVal:	clr		prvSign
 			sbrs	prvInH, 7
 			rjmp	prv_3
@@ -42,6 +44,9 @@ prv_4:		rcall uartSend
 
 			.def	gwChar = r16
 			.def	gwLen  = r19
+
+
+;================== getWord
 
 ; word_buffer = getWord()
 ; R19 = len()

@@ -1,3 +1,5 @@
+;================== div16u
+
 			.def	drem16uL = r14
 			.def	drem16uH = r15
 			.def	dres16uL = r16
@@ -8,8 +10,9 @@
 			.def	dv16uH   = r19
 			.def	dcnt16u  = r20
 
-; [r17:r16] = [r17:r16] / [r19:r18]
-; [r15:r14] = [r17:r16] mod [r19:r18]
+; [R17:R16] = [R17:R16] / [R19:R18]
+; [R15:R14] = [R17:R16] mod [R19:R18]
+; uses R20
 div16u:		clr		drem16uL			; clear remainder Low byte
 			sub		drem16uH, drem16uH	; clear remainder High byte and	carry
 			ldi		dcnt16u, 17			; init loop counter
@@ -31,6 +34,7 @@ d16u_3:		sec							; set carry to be shifted into result
 			rjmp	d16u_1
 
 
+;================== div16s
 
 			.def	d16s     = r13	; sign register
 			.def	drem16sL = r14	; remainder low byte
@@ -43,7 +47,9 @@ d16u_3:		sec							; set carry to be shifted into result
 			.def	dv16sH   = r19	; divisor high byte
 			.def	dcnt16s  = r20	; loop counter
 
-
+; [R17:r16] = [R17:R16] / [R19:R18]
+; [R15:r14] = [R17:R16] mod [R19:R18]
+; uses R13, R20
 div16s:		mov		d16s, dd16sH		; move dividend High to sign register
 			eor		d16s, dv16sH		; xor divisor High with sign register
 			sbrs	dd16sH, 7			; if MSB in dividend set
@@ -86,6 +92,8 @@ d16s_6:		sec							; set carry to be shifted into result
 			rjmp	d16s_3
 
 
+;================== div16_by10u
+
 			.def	d10in16L  = r16
 			.def	d10in16H  = r17
 			.def	d10out16L = r18
@@ -94,9 +102,9 @@ d16s_6:		sec							; set carry to be shifted into result
 			.def	d10tmpH = r21
 			.def	d10rem = r22
 
-; [r19:r18] = [r17:r16] / 10
-; [r22]     = [r17:r16] mod 10
-; use R20, R21
+; [R19:R18] = [R17:R16] / 10
+; [R22]     = [R17:R16] mod 10
+; uses R20, R21
 div16_by10u:
 			; RES = (IN * 0xCCCD) >> 16
 			ldi		d10tmpL, low(0xCCCD)
@@ -146,14 +154,16 @@ div16_by10u:
 			ret
 
 
+;================== mul16_by10u
+
 			.def	m10in16L  = r16
 			.def	m10in16H  = r17
 			.def	m10out16L = r18
 			.def	m10out16H = r19
 			.def	m10tmp    = r20
 
-; [r19:r18] = [r17:r16] * 10
-; use R20
+; [R19:R18] = [R17:R16] * 10
+; uses R20
 mul16_by10u:
 			ldi		m10tmp, 10
 			mul		m10in16L, r20

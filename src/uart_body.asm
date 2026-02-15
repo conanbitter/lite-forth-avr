@@ -1,4 +1,7 @@
-; uartInit
+;================== uartInit
+
+; uartInit()
+; uses R16
 uartInit:	ldi		r16, 0
 			sts		uart_caret, r16
 			
@@ -15,8 +18,11 @@ uartInit:	ldi		r16, 0
 			sts		UCSR0B, r16
 			ret
 
+
+;================== uartGetc
+
 ; R16 = getc()
-; use	R17, R18, Y
+; uses R17, R18, Y
 uartGetc:	ldi		YL, low(uart_buf)
 			ldi		YH, high(uart_buf)
 			
@@ -27,14 +33,14 @@ uartGetc:	ldi		YL, low(uart_buf)
 			; buffer is empty, load new string
 			clr		r16
 uartgc_loop:
-			lds		r17, UCSR0A ; wait for char
+			lds		r17, UCSR0A			; wait for char
 			sbrs	r17, RXC0
 			rjmp	uartgc_loop
 			
 			lds		r18, UDR0
 			st		Y+, r18
 			inc		r16
-			cpi		r18, 0x0D ; is '\n'
+			cpi		r18, 0x0D			; is '\n'
 			breq	uartgc_endloop
 			cpi		r16, UART_BUFFER_SIZE-1
 			brsh	uartgc_endloop
@@ -68,7 +74,10 @@ uartgc_became_empty:
 			ret
 
 
-; uartPutC(R16)
+;================== uartPutc
+
+; uartPutc(R16)
+; uses R17
 uartPutc:	lds		r17, UCSR0A
 			sbrs	r17, UDRE0
 			rjmp	uartPutC
@@ -77,7 +86,10 @@ uartPutc:	lds		r17, UCSR0A
 			ret
 
 
+;================== uartSendPm
+
 ; uartSendPm(Z)
+; uses R16, R17
 uartSendPm:	lpm		r16, Z+
 			tst		r16
 			breq	uartm_end
@@ -92,7 +104,10 @@ uartm_wait:	lds		r17, UCSR0A
 uartm_end:	ret
 
 
+;================== uartSend
+
 ; uartSend(Z)
+; uses R16, R17
 uartSend:	ld		r16, Z+
 			tst		r16
 			breq	uarts_end
