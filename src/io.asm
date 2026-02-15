@@ -38,3 +38,41 @@ prv_2:		rcall	div16_by10u
 
 prv_4:		rcall uartSend
 			ret
+
+
+			.def	gwChar = r16
+			.def	gwLen  = r19
+
+; word_buffer = getWord()
+; R19 = len()
+; uses R16, R17, R18, R19, Y, Z
+getWord:	ldi		ZL, low(word_buffer)
+			ldi		ZH, high(word_buffer)
+			clr		gwLen
+			
+gw_start:	rcall	uartGetc
+			cpi		gwChar, '\'			; skip comments
+			breq	gw_skipcomment
+			cpi		gwChar, ' '			; skip spaces
+			breq	gw_start
+
+gw_read:	st		Z+, gwChar
+			inc		gwLen 				; size of the word
+			rcall	uartGetc
+			cpi		gwChar, ' ' 		; end of the word
+			breq	gw_end
+			cpi		gwChar, 0x0D		; end of the line
+			breq	gw_end
+			cpi		gwLen, WORD_SIZE-1	; word too long
+			breq	gw_end
+			rjmp	gw_read
+
+gw_end:		clr		gwChar				; zero termination
+			st		Z+, gwChar
+			ret
+
+gw_skipcomment:
+			rcall	uartGetc
+			cpi		gwChar, 0x0D 		; '\n'
+			brne	gw_skipcomment
+			rjmp	gw_start

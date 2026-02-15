@@ -16,6 +16,7 @@ uartInit:	ldi		r16, 0
 			ret
 
 ; R16 = getc()
+; use	R17, R18, Y
 uartGetc:	ldi		YL, low(uart_buf)
 			ldi		YH, high(uart_buf)
 			

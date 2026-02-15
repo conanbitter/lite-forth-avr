@@ -69,8 +69,9 @@ main:
 			ldi		r16, low(-6553)
 			ldi		r17, high(-6553)
 			rcall	printVal
+			rcall	getWord
 
-loop:		rjmp	loop
+loop:		rjmp	loop			
 
 			.include "asmwords.asm"
 ;			.include "constwords.asm"
