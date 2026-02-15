@@ -1,228 +1,343 @@
-CODE_DROP:	pop		r16
-			pop		r16
+; Name conventions:
+; WORD_<NAME> - pointer to start of the word
+; <NAME>      - pointer to codeword in the word
+; CODE_<NAME> - code of the codeword
+; _<NAME>     - helper function for the codeword
+
+; Values on stack convention
+; stack begin ... xH xL
+;                    ^
+;                    stack pointer
+
+			.def	AL = r16
+			.def	AH = r17
+			.def	BL = r18
+			.def	BH = r19
+			.def	CL = r12
+			.def	CH = r13
+			.def	DL = r14
+			.def	DH = r15
+
+			; ( n -- )
+CODE_DROP:	pop		AL
+			pop		AL
+
 			rjmp	NEXT
 
 
-CODE_SWAP:	pop		r16
-			pop		r17
-			pop		r18
-			pop		r19
-			push	r17
-			push	r16
-			push	r19
-			push	r18
+			; ( n1 n2 -- n2 n1 )
+CODE_SWAP:	pop		AL
+			pop		AH
+
+			pop		BL
+			pop		BH
+
+			push	AH
+			push	AL
+
+			push	BH
+			push	BL
+
 			rjmp	NEXT
 
 
-CODE_DUP:	pop		r16
-			pop		r17
-			push	r17
-			push	r16
-			push	r17
-			push	r16
+			; ( n -- n n )
+CODE_DUP:	pop		AL
+			pop		AH
+
+			push	AH
+			push	AL
+
+			push	AH
+			push	AL
+
 			rjmp	NEXT
 
 
+			; ( n1 n2 -- n1 n2 n1 )
 CODE_OVER:	in		YL,	SPL
     		in		YH, SPH
     		adiw	YL, 2
-    		ld		r16, Y+
-    		ld		r17, Y
-    		push	r17
-    		push	r16
+
+    		ld		AL, Y+
+    		ld		AH, Y
+
+    		push	AH
+    		push	AL
+
 			rjmp	NEXT
 
 
-CODE_ROT:	pop		r14
-			pop		r15
-			pop		r16
-			pop		r17
-			pop		r18
-			pop		r19
-			push	r15
-			push	r14
-			push	r19
-			push	r18
-			push	r17
-			push	r16
+			; ( n1 n2 n3 -- n3 n1 n2 )
+CODE_ROT:	pop		CL
+			pop		CH
+
+			pop		AL
+			pop		AH
+
+			pop		BL
+			pop		BH
+
+			push	CH
+			push	CL
+
+			push	BH
+			push	BL
+
+			push	AH
+			push	AL
+
 			rjmp	NEXT
 
 
-CODE_NROT:	pop		r14
-			pop		r15
-			pop		r16
-			pop		r17
-			pop		r18
-			pop		r19
-			push	r17
-			push	r16
-			push	r15
-			push	r14
-			push	r19
-			push	r18
+			; ( n1 n2 n3 -- n2 n3 n1 )
+CODE_NROT:	pop		CL
+			pop		CH
+
+			pop		AL
+			pop		AH
+
+			pop		BL
+			pop		BH
+
+			push	AH
+			push	AL
+
+			push	CH
+			push	CL
+
+			push	BH
+			push	BL
+
 			rjmp	NEXT
 			
 
-CODE_2DROP:	pop		r16
-			pop		r16
-			pop		r16
-			pop		r16
+			; ( n1 n2 -- )
+CODE_2DROP:	pop		AL
+			pop		AL
+
+			pop		AL
+			pop		AL
+
 			rjmp	NEXT
 
 
-CODE_2SWAP:	pop		r12
-			pop		r13
-			pop		r14
-			pop		r15
-			pop		r16
-			pop		r17
-			pop		r18
-			pop		r19
-			push	r15
-			push	r14
-			push	r13
-			push	r12
-			push	r19
-			push	r18
-			push	r17
-			push	r16
+			; ( n1 n2 n3 n4 -- n3 n4 n1 n2 )
+CODE_2SWAP:	pop		DL
+			pop		DH
+
+			pop		CL
+			pop		CH
+
+			pop		BL
+			pop		BH
+
+			pop		AL
+			pop		AH
+
+			push	CH
+			push	CL
+
+			push	DH
+			push	DL
+
+			push	AH
+			push	AL
+
+			push	BH
+			push	BL
+			
 			rjmp	NEXT
 
 
+			; ( n1 n2 -- n1 n2 n1 n2 )
 CODE_2DUP:	in		YL, SPL
     		in		YH, SPH
-    		ld		r16, Y+
-    		ld		r17, Y+
-			ld		r18, Y+
-			ld		r19, Y+
-    		push	r19
-			push	r18
-			push	r17
-    		push	r16
+
+			ld		BL, Y+
+			ld		BH, Y+
+
+    		ld		AL, Y+
+    		ld		AH, Y+
+
+			push	AH
+    		push	AL
+
+    		push	BH
+			push	BL
+
 			rjmp	NEXT
 
 
+			; ( n -- n!=0 ? n n : n)
 CODE_QDUP:	in		YL, SPL
     		in		YH, SPH
-			ld		r16, Y+
-    		ld		r17, Y+
-			movw	r18, r16
-			or		r18, r19
-			tst		r18
+			ld		AL, Y+
+    		ld		AH, Y+
+
+			movw	BL, AL
+			or		BL, BH
+			tst		BL
 			brne	CODE_QDUP_ELSE
-			push	r17
-			push	r16
+
+			push	AH
+			push	AL
 CODE_QDUP_ELSE:
 			rjmp	NEXT
 
 
-CODE_INC:	pop		r16
-			pop		r17
-			subi	r16, low(-1)
-			sbci	r17, high(-1)
-			push	r17
-			push	r16
+			; ( n -- n+1 )
+CODE_INC:	pop		AL
+			pop		AH
+
+			subi	AL, low(-1)
+			sbci	AH, high(-1)
+
+			push	AH
+			push	AL
+
 			rjmp	NEXT
 
 
-CODE_DEC:	pop		r16
-			pop		r17
-			subi	r16, low(1)
-			sbci	r17, high(1)
-			push	r17
-			push	r16
+			; ( n -- n-1 )
+CODE_DEC:	pop		AL
+			pop		AH
+
+			subi	AL, low(1)
+			sbci	AH, high(1)
+
+			push	AH
+			push	AL
+
 			rjmp	NEXT
 
 
-CODE_INC2:	pop		r16
-			pop		r17
-			subi	r16, low(-2)
-			sbci	r17, high(-2)
-			push	r17
-			push	r16
+			; ( n -- n+2 )
+CODE_INC2:	pop		AL
+			pop		AH
+
+			subi	AL, low(-2)
+			sbci	AH, high(-2)
+
+			push	AH
+			push	AL
+
 			rjmp	NEXT
 
 
-CODE_DEC2:	pop		r16
-			pop		r17
-			subi	r16, low(2)
-			sbci	r17, high(2)
-			push	r17
-			push	r16
+			; ( n -- n-2 )
+CODE_DEC2:	pop		AL
+			pop		AH
+
+			subi	AL, low(2)
+			sbci	AH, high(2)
+
+			push	AH
+			push	AL
+
 			rjmp	NEXT
 
 
-CODE_INC4:	pop		r16
-			pop		r17
-			subi	r16, low(-4)
-			sbci	r17, high(-4)
-			push	r17
-			push	r16
+			; ( n -- n+4 )
+CODE_INC4:	pop		AL
+			pop		AH
+
+			subi	AL, low(-4)
+			sbci	AH, high(-4)
+
+			push	AH
+			push	AL
+
 			rjmp	NEXT
 
 
-CODE_DEC4:	pop		r16
-			pop		r17
-			subi	r16, low(4)
-			sbci	r17, high(4)
-			push	r17
-			push	r16
+			; ( n -- n-4 )
+CODE_DEC4:	pop		AL
+			pop		AH
+			subi	AL, low(4)
+			sbci	AH, high(4)
+			push	AH
+			push	AL
 			rjmp	NEXT
 
 
-CODE_ADD:	pop		r16
-			pop		r17
-			pop		r18
-			pop		r19
-			add		r16, r18
-			adc		r17, r19
-			push	r17
-			push	r16
+			; ( n1 n2 -- n1+n2 )
+CODE_ADD:	pop		BL
+			pop		BH
+
+			pop		AL
+			pop		AH			
+
+			add		AL, BL
+			adc		AH, BH
+
+			push	AH
+			push	AL
+
 			rjmp	NEXT
 
 
-CODE_SUB:	pop		r16
-			pop		r17
-			pop		r18
-			pop		r19
-			sub		r16, r18
-			sbc		r17, r19
-			push	r17
-			push	r16
+			; ( n1 n2 -- n1-n2 )
+CODE_SUB:	pop		BL
+			pop		BH
+
+			pop		AL
+			pop		AH
+			
+			sub		AL, BL
+			sbc		AH, BH
+
+			push	AH
+			push	AL
+
 			rjmp	NEXT
 
 
-CODE_EQ:	pop		r16
-			pop		r17
-			pop		r18
-			pop		r19
-			cp		r16, r18
+			; ( n1 n2 -- n1==n2 )
+CODE_EQ:	pop		BL
+			pop		BH
+
+			pop		AL
+			pop		AH
+			
+			cp		AL, BL
 			brne	CODE_EQ_NOT
-			cp		r17, r19
+			cp		AH, BH
 			brne	CODE_EQ_NOT
-			ldi		r16, 0xFF
+
+			ldi		AL, 0xFF
 			rjmp	CODE_EQ_END
+
 CODE_EQ_NOT:
-			ldi		r16, 0x00
+			ldi		AL, 0x00
+
 CODE_EQ_END:
-			push	r16
-			push	r16			
+			push	AL
+			push	AL
+
 			rjmp	NEXT
 
 
-CODE_NEQ:	pop		r16
-			pop		r17
-			pop		r18
-			pop		r19
-			cp		r16, r18
+			; ( n1 n2 -- n1!=n2 )
+CODE_NEQ:	pop		BL
+			pop		BH
+
+			pop		AL
+			pop		AH
+			
+			cp		AL, BL
 			brne	CODE_NEQ_NOT
-			cp		r17, r19
+			cp		AH, BH
 			brne	CODE_NEQ_NOT
-			ldi		r16, 0x00
+
+			ldi		AL, 0x00
 			rjmp	CODE_NEQ_END
+
 CODE_NEQ_NOT:
-			ldi		r16, 0xFF
+			ldi		AL, 0xFF
+
 CODE_NEQ_END:
-			push	r16
-			push	r16			
+			push	AL
+			push	AL
+
 			rjmp	NEXT
