@@ -12,6 +12,7 @@
 
 			.equ	RSTACK_SIZE       = 32 * 2
 			.equ	FLAG_IS_CORE_WORD = 0b10000000
+			.equ	WORD_SIZE         = 32
 
 ; ========== MACROS ==========
 
@@ -38,6 +39,7 @@
 			.dseg
 			.org SRAM_START
 var_S0:		.byte 2
+word_buffer:.byte WORD_SIZE
 			.include "uart_head.asm"
 
 ; ========== CODE ============
@@ -57,16 +59,16 @@ main:
 			ldi		XL, low(RAMEND-RSTACK_SIZE)
 			ldi		XH, high(RAMEND-RSTACK_SIZE)
 
-;			rcall	uartInit
-;			uartMsg	LOGO_MSG
+			rcall	uartInit
+			uartMsg	LOGO_MSG
 ;			rcall	uartGetc
 ;			rcall	uartGetc
 
 			nop
 
-			ldi		r16, low(6553)
-			ldi		r17, high(6553)
-			rcall	mul16_by10u
+			ldi		r16, low(-6553)
+			ldi		r17, high(-6553)
+			rcall	printVal
 
 loop:		rjmp	loop
 
@@ -75,6 +77,7 @@ loop:		rjmp	loop
 ;			.include "varwords.asm"
 ;			.include "forthwords.asm"
 			.include "division.asm"
+			.include "io.asm"
 			.include "asmcodes.asm"
 
 
@@ -111,4 +114,4 @@ CODE_EXIT:	RPop [CodePtrL:CodePtrH]
 
 			.include "uart_body.asm"
 
-LOGO_MSG:	.db "LITE [ FORTH ] AVR v0.1 (build  %DAY%.%MONTH%.%YEAR% %HOUR%:%MINUTE% m328p)", 0
+LOGO_MSG:	.db "LITE [ FORTH ] AVR v0.1 (build  %DAY%.%MONTH%.%YEAR% %HOUR%:%MINUTE% m328p)", 13, 0, 0

@@ -92,10 +92,10 @@ d16s_6:		sec							; set carry to be shifted into result
 			.def	d10out16H = r19
 			.def	d10tmpL = r20
 			.def	d10tmpH = r21
-			.def	d10rem = r15
+			.def	d10rem = r22
 
 ; [r19:r18] = [r17:r16] / 10
-; [r15]     = [r17:r16] mod 10
+; [r22]     = [r17:r16] mod 10
 ; use R20, R21
 div16_by10u:
 			; RES = (IN * 0xCCCD) >> 16
