@@ -9,6 +9,7 @@
 			.def	isCoreWord = r2
 			.def	codePtrL   = r24
 			.def	codePtrH   = r25
+			.def	isError    = r4
 
 			.equ	RSTACK_SIZE       = 32 * 2
 			.equ	FLAG_IS_CORE_WORD = 0b10000000
@@ -66,17 +67,16 @@ main:
 
 			nop
 
-			ldi		r16, low(-6553)
-			ldi		r17, high(-6553)
-			rcall	printVal
 			rcall	getWord
+			rcall	strToInt
 
-loop:		rjmp	loop			
+loop:		rjmp	loop	
 
 			.include "asmwords.asm"
 ;			.include "constwords.asm"
 ;			.include "varwords.asm"
 ;			.include "forthwords.asm"
+			.include "uart_body.asm"
 			.include "division.asm"
 			.include "io.asm"
 			.include "asmcodes.asm"
@@ -113,6 +113,6 @@ CODE_EXIT:	RPop [CodePtrL:CodePtrH]
 			mov isCoreWord, r16
 			rjmp NEXT
 
-			.include "uart_body.asm"
-
 LOGO_MSG:	.db "LITE [ FORTH ] AVR v0.1 (build  %DAY%.%MONTH%.%YEAR% %HOUR%:%MINUTE% m328p)", 13, 0, 0
+MSG_OK:		.db " ok", 0
+MSG_UNKWRD:	.db	" unknown word ", 0, 0

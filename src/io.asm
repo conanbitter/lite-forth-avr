@@ -1,3 +1,6 @@
+			.equ	_KEY  = uartGetc
+			.equ	_EMIT = uartPutc
+
 ;================== printVal
 
 			.def	prvTmp   = r22
@@ -81,3 +84,58 @@ gw_skipcomment:
 			cpi		gwChar, 0x0D 		; '\n'
 			brne	gw_skipcomment
 			rjmp	gw_start
+
+
+;================== strToInt
+
+			.def	stiSign = r15
+			.def	stiAccL = r16
+			.def	stiAccH = r17
+			.def	stiChar = r21
+			.def	stiMulL = r18
+
+; [R17:R16] = strToInt(word_buffer)
+; error = 1 if failed
+; uses R15, R18, R19, R20, R21, Y
+strToInt:	ldi		YL, low(word_buffer)
+			ldi		YH, high(word_buffer)
+			clr		isError
+			clr		stiSign
+			clr		stiAccL
+			clr		stiAccH
+
+			ld		stiChar, Y			; check leading '-'
+			cpi		stiChar, '-'
+			brne	sti_loop
+			inc		stiSign
+			adiw	YL, 1
+
+sti_loop:	ld		stiChar, Y+
+			tst		stiChar
+			breq	sti_end
+
+			cpi		stiChar, '9'+1
+			brsh	sti_error			; not a digit
+			subi	stiChar, '0'
+			brlo	sti_error			; not a digit
+
+			call	mul16_by10u
+			movw	stiAccL, stiMulL
+
+			add		stiAccL, stiChar
+			clr		stiChar
+			adc		stiAccH, stiChar
+
+			rjmp	sti_loop
+
+sti_end:	tst		stiSign
+			breq	sti_ret
+
+			neg		stiAccL
+			com		stiAccH	
+
+sti_ret:	ret
+
+sti_error:	ldi		stiChar, 1
+			mov		isError, stiChar
+			ret
