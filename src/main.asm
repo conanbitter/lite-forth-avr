@@ -64,44 +64,17 @@ main:
 
 			nop
 
-			ldi		r16, low(0xFFFF)
-			ldi		r17, high(0xFFFF)
-			ldi		r18, low(0xCCCD)
-			ldi		r19, high(0xCCCD)
+			ldi		r16, low(5869)
+			ldi		r17, high(5869)
+			rcall	div16_by10u
 
-			.def	d10in16L  = r16
-			.def	d10in16H  = r17
-			.def	d10out16L = r18
-			.def	d10out16H = r19
-			
-
-			clr		r21
-
-			mov		r20, r17
-
-			mul		r16, r19
-			add		r20, r0
-			adc		r21, r1
-
-			mul		r17, r18
-			add		r20, r0
-			adc		r21, r1
-
-			mov		r20, r21
-			clr		r21
-			adc		r21, r21
-
-			mul		r17, r19
-			add		r20, r0
-			adc		r21, r1
-			
 loop:		rjmp	loop
 
 			.include "asmwords.asm"
 ;			.include "constwords.asm"
 ;			.include "varwords.asm"
 ;			.include "forthwords.asm"
-;			.include "division.asm"
+			.include "division.asm"
 			.include "asmcodes.asm"
 
 
