@@ -7,7 +7,27 @@
 
 ; name is padded with ", 0" to even number of bytes
 
-WORD_DROP:	.dw	0
+WORD_FIND:	.dw	0
+			.db 4, "FIND", 4
+FIND:		.dw CODE_FIND
+
+
+WORD_KEY:	.dw	WORD_FIND *2
+			.db 3, "KEY", 0, 4
+KEY:		.dw CODE_KEY
+
+
+WORD_EMIT:	.dw	WORD_KEY *2
+			.db 4, "EMIT", 4
+EMIT:		.dw CODE_EMIT
+
+
+WORD_WORD:	.dw	WORD_EMIT *2
+			.db 4, "WORD", 4
+WORD:		.dw CODE_WORD
+
+
+WORD_DROP:	.dw	WORD_WORD *2
 			.db 4, "DROP", 4
 DROP:		.dw CODE_DROP
 
