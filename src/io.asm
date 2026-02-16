@@ -64,7 +64,12 @@ gw_start:	rcall	uartGetc
 			cpi		gwChar, ' '			; skip spaces
 			breq	gw_start
 
-gw_read:	st		Z+, gwChar
+gw_read:	cpi		gwChar, 'a'			; make the word uppercased
+			brlo	gw_nolw
+			cpi		gwChar, 'z'+1
+			brge	gw_nolw
+			subi	gwChar, 'a'-'A'
+gw_nolw:	st		Z+, gwChar
 			inc		gwLen 				; size of the word
 			rcall	uartGetc
 			cpi		gwChar, ' ' 		; end of the word

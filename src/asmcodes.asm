@@ -9,6 +9,82 @@
 ;                    ^
 ;                    stack pointer
 
+
+			;( *chars len -- ptr )
+CODE_FIND:	pop		r16					; len
+			pop		r17
+			pop		r14					; char pointer
+			pop		r15
+			rcall	_FIND_CORE
+			push	ZH
+			push	ZL
+
+
+;================== _FIND_CORE
+
+			.def	fndcWordPtrL   = r14
+			.def	fndcWordLenL   = r16
+			.def	fndcWordLenH   = r17
+			.def	fndcDWordLen   = r17
+			.def	fndcNextDWordL = r18
+			.def	fndcNextDWordH = r19
+			.def	fndcIChar      = r20
+			.def	fndcDChar      = r21
+			.def	fndcTmp        = r16
+
+; Z = &find(chars=[r15:r14], len=[r17:r16]).codeword
+; uses	R18, R19, R20, R21, Y
+_FIND_CORE:	tst		fndcWordLenH
+			brne	fndc_error
+
+			ldi		ZL, low(LAST_CORE)
+			ldi		ZH,	high(LAST_CORE)
+
+fndc_wl:	lpm		fndcNextDWordL, Z+ 	; next word
+			lpm		fndcNextDWordH, Z+
+			lpm		fndcDWordLen, Z+
+
+			andi	fndcDWordLen, LENGTH_MASK
+			cp		fndcWordLenL, fndcDWordLen
+			brne	fndc_next
+
+			movw	YL, fndcWordPtrL
+
+fndc_chl:	ld		fndcIChar, Y+
+			lpm		fndcDChar, Z+
+
+			cp		fndcIChar, fndcDChar
+			brne	fndc_next
+
+			dec		fndcDWordLen
+			tst		fndcDWordLen
+			breq	fndc_found
+
+			rjmp	fndc_chl
+
+fndc_next:	tst		fndcNextDWordL
+			brne	fndc_next2
+
+			tst		fndcNextDWordH
+			breq	fndc_error
+
+fndc_next2:	movw	ZL, fndcNextDWordL
+			rjmp	fndc_wl
+
+fndc_found:	lpm		fndcTmp, Z
+			sub		ZL, fndcTmp
+			sbci	ZL, 3				; - sizeof(prev) - sizeof(right_len)
+			ret
+
+fndc_error:	ldi		r16, 1
+			mov		isError, r16
+			clr		ZL
+			clr		ZH
+			ret
+
+
+;================== other codes
+
 			.def	AL = r16
 			.def	AH = r17
 			.def	BL = r18

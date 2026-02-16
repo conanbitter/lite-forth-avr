@@ -13,6 +13,7 @@
 
 			.equ	RSTACK_SIZE       = 32 * 2
 			.equ	FLAG_IS_CORE_WORD = 0b10000000
+			.equ	LENGTH_MASK       = 0b00111111
 			.equ	WORD_SIZE         = 32
 
 ; ========== MACROS ==========
@@ -67,10 +68,17 @@ main:
 
 			nop
 
-			rcall	getWord
-			rcall	strToInt
+loop:		rcall	getWord
+			ldi		r17, high(word_buffer)
+			ldi		r16, low(word_buffer)
+			movw	r14, r16
+			clr		r17
+			mov		r16, r19
+			rcall	_FIND_CORE
+			movw	r16, ZL
+			rcall	printVal
 
-loop:		rjmp	loop	
+			rjmp	loop
 
 			.include "asmwords.asm"
 ;			.include "constwords.asm"
@@ -80,7 +88,6 @@ loop:		rjmp	loop
 			.include "division.asm"
 			.include "io.asm"
 			.include "asmcodes.asm"
-
 
 NEXT:		movw	ZL, codePtrL		; Z = codePtr
 			adiw	codePtrL, 2			; codePtr += 2

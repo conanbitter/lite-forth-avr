@@ -106,7 +106,7 @@ WORD_NEQ:	.dw WORD_EQ *2
 			.db 2, "<>", 2
 NEQ:		.dw CODE_NEQ
 
-			.equ LAST_CORE = WORD_NEQ
+			.equ LAST_CORE = WORD_NEQ *2
 
 ;TODO
 ;*
