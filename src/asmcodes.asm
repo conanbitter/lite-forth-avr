@@ -10,7 +10,7 @@
 ;                    stack pointer
 
 
-			;( *chars len -- ptr )
+			;( *chars len -- d-addr )
 CODE_FIND:	pop		r16					; len
 			pop		r17
 			pop		r14					; char pointer
@@ -71,7 +71,9 @@ fndc_next:	tst		fndcNextDWordL
 fndc_next2:	movw	ZL, fndcNextDWordL
 			rjmp	fndc_wl
 
-fndc_found:	lpm		fndcTmp, Z
+fndc_found:	sbrc	fndcWordLenL, 0
+			adiw	ZL, 1
+			lpm		fndcTmp, Z
 			sub		ZL, fndcTmp
 			sbci	ZL, 3				; - sizeof(prev) - sizeof(right_len)
 			ret
