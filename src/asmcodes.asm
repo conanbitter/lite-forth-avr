@@ -44,7 +44,7 @@ fndc_wl:	lpm		fndcNextDWordL, Z+ 	; next word
 			lpm		fndcNextDWordH, Z+
 			lpm		fndcDWordLen, Z+
 
-			andi	fndcDWordLen, LENGTH_MASK
+			andi	fndcDWordLen, LENGTH_MASK | FLAG_HIDDEN
 			cp		fndcWordLenL, fndcDWordLen
 			brne	fndc_next
 
@@ -84,6 +84,36 @@ fndc_error:	ldi		r16, 1
 			clr		ZH
 			ret
 
+
+;================== CODE_TCFA
+
+CODE_TCFA:	pop		ZL
+			pop		ZH
+
+			rcall	_TCFA
+
+			push	ZH
+			push	ZL
+
+			rjmp	NEXT
+
+
+; Z = _TCFA(Z)
+; uses R16, R17
+_TCFA:		adiw	ZL, 2				; skip prev link
+			
+			rcall	readByte
+			clr		r17
+			andi	r16, LENGTH_MASK
+			add		ZL, r16
+			adc		ZH, r17
+
+			sbrc	r16, 0				; skip padding
+			adiw	ZL, 1
+
+			adiw	ZL, 1				; skip right len
+
+			ret
 
 ;================== other codes
 

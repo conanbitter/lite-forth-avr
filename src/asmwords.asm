@@ -12,7 +12,12 @@ WORD_FIND:	.dw	0
 FIND:		.dw CODE_FIND
 
 
-WORD_KEY:	.dw	WORD_FIND *2
+WORD_TCFA:	.dw	WORD_FIND *2
+			.db 4, ">CFA", 4
+TCFA:		.dw CODE_TCFA
+
+
+WORD_KEY:	.dw	WORD_TCFA *2
 			.db 3, "KEY", 0, 4
 KEY:		.dw CODE_KEY
 
