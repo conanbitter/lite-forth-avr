@@ -76,8 +76,7 @@ loop:		rcall	getWord
 			movw	r14, r16
 			clr		r17
 			mov		r16, r19
-			rcall	_FIND_CORE
-			ori		ZH, FLAG_PM
+			rcall	_FIND
 			rcall	_TCFA
 			movw	r16, ZL
 			andi	r17, 0b01111111

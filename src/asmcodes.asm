@@ -15,7 +15,7 @@ CODE_FIND:	pop		r16					; len
 			pop		r17
 			pop		r14					; char pointer
 			pop		r15
-			rcall	_FIND_CORE
+			rcall	_FIND
 			push	ZH
 			push	ZL
 
@@ -82,6 +82,13 @@ fndc_error:	ldi		r16, 1
 			mov		isError, r16
 			clr		ZL
 			clr		ZH
+			ret
+
+
+;================== _FIND
+
+_FIND:		rcall	_FIND_CORE
+			ori		ZH, FLAG_PM
 			ret
 
 
