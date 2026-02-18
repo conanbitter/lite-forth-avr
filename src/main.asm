@@ -94,11 +94,11 @@ loop:		rcall	getWord
 			.include "asmcodes.asm"
 
 
-;================== readWord
+;================== readCell
 
-; [R17:R16] = readWord(Z)
+; [R17:R16] = readCell(Z)
 ; Z += 2
-readWord:	sbrs	ZH, 7
+readCell:	sbrs	ZH, 7
 			rjmp	rc_ram
 			andi	ZH, 0b01111111		; Z is in PM space
 			lpm		r16, Z+
@@ -130,7 +130,7 @@ rb_ram:		ld		r16, Z+				; Z is in RAM space
 NEXT:		lds		ZL, word_ptr		; Z = WordPtr
 			lds		ZH, word_ptr+1
 			
-			rcall	readWord			; [r17:r16] = load (addr=Z), Z+=2
+			rcall	readCell			; [r17:r16] = load (addr=Z), Z+=2
 			
 			sts		word_ptr, ZL		; WordPtr = Z
 			sts		word_ptr+1, ZH
@@ -139,7 +139,7 @@ NEXT:		lds		ZL, word_ptr		; Z = WordPtr
 			sts		code_ptr+1, r17		
 			
 			movw	ZL, r16				; Z = [r17:r16]
-			rcall	readWord			; [r17:r16] = load (addr=Z)
+			rcall	readCell			; [r17:r16] = load (addr=Z)
 			
 			movw	ZL, r16				; Z = [r17:r16]
 			ijmp						; jump Z
@@ -174,7 +174,7 @@ CODE_EXIT:	RPop	[r17:r16]
 
 CODE_BRANCH:lds		ZL, word_ptr			; Z = WordPtr
 			lds		ZH, word_ptr+1
-			rcall	readWord			; [r17:r16] = load (addr=Z)
+			rcall	readCell			; [r17:r16] = load (addr=Z)
 			
 			sbiw	ZL, 2				; go back to offset cell
 			add		ZL, r16				; add offset to WordPtr
