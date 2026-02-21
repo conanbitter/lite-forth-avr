@@ -1,5 +1,1 @@
-*.cfg
-*.hex
-*.lst
-*.obj
-*.map
+build
