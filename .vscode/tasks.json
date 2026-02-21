@@ -1,0 +1,41 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Build",
+			"type": "shell",
+			"group": "build",
+			"command": "make",
+			"problemMatcher": []
+		},
+		{
+			"label": "Clean",
+			"type": "shell",
+			"group": "build",
+			"command": "make",
+			"args": ["clean"],
+			"problemMatcher": []
+		},
+        {
+			"label": "Debug QEMU",
+			"type": "shell",
+            "isBackground": true,
+			"group": "build",
+			"command": "make",
+			"args": ["qemu_debug"],
+			"problemMatcher": {
+                "pattern": [{
+                    "regexp": ".",
+                    "file": 1,
+                    "location": 2,
+                    "message": 3
+                }],
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": "^(qemu)",
+                    "endsPattern":"."
+                }
+            },
+		},
+	]
+}
