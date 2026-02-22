@@ -4,9 +4,9 @@
 			rcall	uartSendPm
 			.endm
 
-			.weak uart_buf
-			.weak uartInit
-			.weak uartGetc
-			.weak uartPutc
-			.weak uartSendPm
-			.weak uartSend
+			;.weak uart_buf
+			;.weak uartInit
+			;.weak uartGetc
+			;.weak uartPutc
+			;.weak uartSendPm
+			;.weak uartSend
