@@ -15,7 +15,7 @@ BUILD_DIR = build
 SRC_DIR = src
 
 # Compilers and other
-AS := avr-as
+AS := avr-gcc
 LINKER := avr-ld
 OBJCOPY := avr-objcopy
 AVRSIZE := avr-size
@@ -27,9 +27,9 @@ OBJS_DEBUG := $(patsubst %.S,$(BUILD_DIR)/debug/%.o,$(FILES))
 
 # Compiler setings
 INC_FLAG := -I$(SRC_DIR)
-ASFLAGS := $(INC_FLAG) --defsym F_CPU=$(F_CPU) --defsym UART_ECHO=$(UART_ECHO) -mmcu=$(MCU) #
+ASFLAGS := $(INC_FLAG) -DF_CPU=$(F_CPU) -DUART_ECHO=$(UART_ECHO) -mmcu=$(MCU) -x assembler-with-cpp -nostdlib
 ASFLAGS_DEBUG := $(ASFLAGS) -g --gstabs
-LDFLAGS := -m $(ARCH) -Tdata 0x800100 # necessary for atmega328p
+LDFLAGS := -m $(ARCH)
 
 #Targets
 

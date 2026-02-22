@@ -2,12 +2,12 @@
 ;           * LITE FORTH AVR *
 ;           ******************
 
-            .include "m328Pdef.inc"
+            #include "m328Pdef.inc"
 
 ; ========== DEFINES =========
 
-			isError     = 2
-			isCompiling = 3
+			#define isError     r2
+			#define isCompiling r3
 
 			RSTACK_SIZE    = 32 * 2
 			FLAG_PM        = 0b10000000
@@ -19,7 +19,7 @@
 
 ; =========== RAM ============
 
-			.data
+			.section .noinit
 var_S0:		.word   0
 word_ptr:	.word   0
 code_ptr:	.word   0
