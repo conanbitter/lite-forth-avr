@@ -6,7 +6,7 @@ ARCH = avr5
 MACHINE = uno
 UART_ECHO = 1
 
-FILES = main.S uart.S
+FILES = main.S uart.S divmul.S
 
 # Common section
 
