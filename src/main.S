@@ -3,6 +3,7 @@
 ;           ******************
 
             #include "m328Pdef.inc"
+			#include "uart.inc"
 
 ; ========== DEFINES =========
 
@@ -46,4 +47,16 @@ main:
             clr		isError
 			clr		isCompiling
 
-loop:       rjmp	loop
+			rcall	uartInit
+
+loop:		uartMsg	hello_msg
+			rcall	uartGetc
+			uartMsg	hello_msg2
+			ldi		ZL, lo8(uart_buf)
+			ldi		ZH, hi8(uart_buf)
+			rcall	uartSend
+			rjmp	loop
+
+			.align 2
+hello_msg:	.asciz	"\r\nHello World!\r\nEnter your name\r\n>"
+hello_msg2:	.asciz	"\r\nHello, "

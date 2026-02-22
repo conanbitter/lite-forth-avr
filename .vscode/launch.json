@@ -13,7 +13,7 @@
             "valuesFormatting": "parseText",
             "gdbpath": "avr-gdb",
             "remote": true,
-            "executable": "${workspaceRoot}/build/debug/lfa.elf",
+            "executable": "build/debug/lfa.elf",
             "stopAtConnect": true,
             "preLaunchTask": "Debug QEMU"
         }

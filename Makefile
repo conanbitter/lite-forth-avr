@@ -6,7 +6,7 @@ ARCH = avr5
 MACHINE = uno
 UART_ECHO = 1
 
-FILES = main.S
+FILES = main.S uart.S
 
 # Common section
 
@@ -16,7 +16,7 @@ SRC_DIR = src
 
 # Compilers and other
 AS := avr-gcc
-LINKER := avr-ld
+LINKER := avr-gcc
 OBJCOPY := avr-objcopy
 AVRSIZE := avr-size
 QEMU := qemu-system-avr
@@ -27,9 +27,9 @@ OBJS_DEBUG := $(patsubst %.S,$(BUILD_DIR)/debug/%.o,$(FILES))
 
 # Compiler setings
 INC_FLAG := -I$(SRC_DIR)
-ASFLAGS := $(INC_FLAG) -DF_CPU=$(F_CPU) -DUART_ECHO=$(UART_ECHO) -mmcu=$(MCU) -x assembler-with-cpp -nostdlib
-ASFLAGS_DEBUG := $(ASFLAGS) -g --gstabs
-LDFLAGS := -m $(ARCH)
+ASFLAGS := $(INC_FLAG) -DF_CPU=$(F_CPU) -DUART_ECHO=$(UART_ECHO) -mmcu=$(MCU) -x assembler-with-cpp -c -nostdlib -nostartfiles
+ASFLAGS_DEBUG := $(ASFLAGS) -g -Wa,--gstabs -Wa,-g
+LDFLAGS := $(INC_FLAG) -mmcu=$(MCU) -nostdlib -nostartfiles # -m $(ARCH) 
 
 #Targets
 
