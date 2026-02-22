@@ -8,8 +8,21 @@
 			LENGTH_MASK    = 0b00011111
 			WORD_SIZE      = 32
 
+			_KEY  = uartGetc
+			_EMIT = uartPutc
+
 .macro      sendMsg msgAddr
 			ldi		ZL, lo8(\msgAddr)
 			ldi		ZH, hi8(\msgAddr)
 			rcall	uartSendPm
+.endm
+
+.macro		RPush	RH, RL
+			st		X+, \RH
+			st		X+, \RL
+.endm
+
+.macro		RPop	RH, RL
+			ld		\RL, -X
+			ld		\RH, -X
 .endm

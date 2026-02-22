@@ -1,11 +1,14 @@
 			#include "global.inc"
 
-			_KEY  = uartGetc
-			_EMIT = uartPutc
-
 			.section .noinit
+
+			.global word_ptr
 word_ptr:	.word   0
+
+			.global code_ptr
 code_ptr:	.word   0
+
+			.global word_buffer
 word_buffer:.space  WORD_SIZE
 
 			.text
