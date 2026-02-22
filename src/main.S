@@ -3,28 +3,12 @@
 ;           ******************
 
             #include "m328Pdef.inc"
-			#include "uart.inc"
-
-; ========== DEFINES =========
-
-			#define isError     r2
-			#define isCompiling r3
-
-			RSTACK_SIZE    = 32 * 2
-			FLAG_PM        = 0b10000000
-			FLAG_IMMEDIATE = 0b10000000
-			FLAG_HIDDEN    = 0b00100000
-			LENGTH_MASK    = 0b00011111
-			WORD_SIZE      = 32
-
+			#include "global.inc"
 
 ; =========== RAM ============
 
 			.section .noinit
 var_S0:		.word   0
-word_ptr:	.word   0
-code_ptr:	.word   0
-word_buffer:.space  WORD_SIZE
 
 ; ========== CODE ============
 
@@ -49,9 +33,9 @@ main:
 
 			rcall	uartInit
 
-loop:		uartMsg	hello_msg
+loop:		sendMsg	hello_msg
 			rcall	uartGetc
-			uartMsg	hello_msg2
+			sendMsg	hello_msg2
 			ldi		ZL, lo8(uart_buf)
 			ldi		ZH, hi8(uart_buf)
 			rcall	uartSend
