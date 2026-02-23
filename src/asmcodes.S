@@ -13,6 +13,7 @@
             #include "global.inc"
 
 			;( *chars len -- d-addr )
+            .global CODE_FIND
 CODE_FIND:	pop		r16					; len
 			pop		r17
 			pop		r14					; char pointer

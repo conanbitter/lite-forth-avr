@@ -50,7 +50,7 @@ $(BUILD_DIR)/debug/$(PROJECT).elf: $(OBJS_DEBUG)
 
 $(BUILD_DIR)/debug/%.o: $(SRC_DIR)/%.S | $(BUILD_DIR)/debug
 	@if not exist $(BUILD_DIR)\\NUL mkdir $(BUILD_DIR)
-	$(AS) $(ASFLAGS_DEBUG) -o $@ $<
+	$(AS) $(ASFLAGS_DEBUG) -o $@ -Wa,-alm=$@.lst $<
 
 $(BUILD_DIR)/debug:
 	mkdir $(BUILD_DIR)\debug
