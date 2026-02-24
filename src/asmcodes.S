@@ -97,6 +97,7 @@ _FIND:		rcall	_FIND_CORE
 
 ;================== CODE_TCFA
 
+            .global CODE_TCFA
 CODE_TCFA:	pop		ZL
 			pop		ZH
 
@@ -137,6 +138,7 @@ _TCFA:		adiw	ZL, 2				; skip prev link
 			#define DH r15
 
 			; ( -- char )
+            .global CODE_KEY
 CODE_KEY:	rcall	_KEY
 			clr		AH
 
@@ -147,6 +149,7 @@ CODE_KEY:	rcall	_KEY
 
 
 			; ( char -- )
+            .global CODE_EMIT
 CODE_EMIT:	pop		AL
 			pop		AH
 			rcall	_EMIT
@@ -155,6 +158,7 @@ CODE_EMIT:	pop		AL
 
 
 			; ( -- *char len:u16 )
+            .global CODE_WORD
 CODE_WORD:	rcall	getWord
 
 			ldi		AH, hi8(word_buffer)
@@ -170,6 +174,7 @@ CODE_WORD:	rcall	getWord
 
 
 			; ( n -- )
+            .global CODE_DROP
 CODE_DROP:	pop		AL
 			pop		AL
 
@@ -177,6 +182,7 @@ CODE_DROP:	pop		AL
 
 
 			; ( n1 n2 -- n2 n1 )
+            .global CODE_SWAP
 CODE_SWAP:	pop		AL
 			pop		AH
 
@@ -193,6 +199,7 @@ CODE_SWAP:	pop		AL
 
 
 			; ( n -- n n )
+            .global CODE_DUP
 CODE_DUP:	pop		AL
 			pop		AH
 
@@ -206,6 +213,7 @@ CODE_DUP:	pop		AL
 
 
 			; ( n1 n2 -- n1 n2 n1 )
+            .global CODE_OVER
 CODE_OVER:	in		YL,	SPL
     		in		YH, SPH
     		adiw	YL, 2
@@ -220,6 +228,7 @@ CODE_OVER:	in		YL,	SPL
 
 
 			; ( n1 n2 n3 -- n3 n1 n2 )
+            .global CODE_ROT
 CODE_ROT:	pop		CL
 			pop		CH
 
@@ -242,6 +251,7 @@ CODE_ROT:	pop		CL
 
 
 			; ( n1 n2 n3 -- n2 n3 n1 )
+            .global CODE_NROT
 CODE_NROT:	pop		CL
 			pop		CH
 
@@ -264,6 +274,7 @@ CODE_NROT:	pop		CL
 			
 
 			; ( n1 n2 -- )
+            .global CODE_2DROP
 CODE_2DROP:	pop		AL
 			pop		AL
 
@@ -274,6 +285,7 @@ CODE_2DROP:	pop		AL
 
 
 			; ( n1 n2 n3 n4 -- n3 n4 n1 n2 )
+            .global CODE_2SWAP
 CODE_2SWAP:	pop		DL
 			pop		DH
 
@@ -302,6 +314,7 @@ CODE_2SWAP:	pop		DL
 
 
 			; ( n1 n2 -- n1 n2 n1 n2 )
+            .global CODE_2DUP
 CODE_2DUP:	in		YL, SPL
     		in		YH, SPH
 
@@ -321,6 +334,7 @@ CODE_2DUP:	in		YL, SPL
 
 
 			; ( n -- n!=0 ? n n : n)
+            .global CODE_QDUP
 CODE_QDUP:	in		YL, SPL
     		in		YH, SPH
 			ld		AL, Y+
@@ -338,6 +352,7 @@ CODE_QDUP_ELSE:
 
 
 			; ( n -- n+1 )
+            .global CODE_INC
 CODE_INC:	pop		AL
 			pop		AH
 
@@ -351,6 +366,7 @@ CODE_INC:	pop		AL
 
 
 			; ( n -- n-1 )
+            .global CODE_DEC
 CODE_DEC:	pop		AL
 			pop		AH
 
@@ -364,6 +380,7 @@ CODE_DEC:	pop		AL
 
 
 			; ( n -- n+2 )
+            .global CODE_INC2
 CODE_INC2:	pop		AL
 			pop		AH
 
@@ -377,6 +394,7 @@ CODE_INC2:	pop		AL
 
 
 			; ( n -- n-2 )
+            .global CODE_DEC2
 CODE_DEC2:	pop		AL
 			pop		AH
 
@@ -390,6 +408,7 @@ CODE_DEC2:	pop		AL
 
 
 			; ( n -- n+4 )
+            .global CODE_INC4
 CODE_INC4:	pop		AL
 			pop		AH
 
@@ -403,6 +422,7 @@ CODE_INC4:	pop		AL
 
 
 			; ( n -- n-4 )
+            .global CODE_DEC4
 CODE_DEC4:	pop		AL
 			pop		AH
 			subi	AL, lo8(4)
@@ -413,6 +433,7 @@ CODE_DEC4:	pop		AL
 
 
 			; ( n1 n2 -- n1+n2 )
+            .global CODE_ADD
 CODE_ADD:	pop		BL
 			pop		BH
 
@@ -429,6 +450,7 @@ CODE_ADD:	pop		BL
 
 
 			; ( n1 n2 -- n1-n2 )
+            .global CODE_SUB
 CODE_SUB:	pop		BL
 			pop		BH
 
@@ -445,6 +467,7 @@ CODE_SUB:	pop		BL
 
 
 			; ( n1 n2 -- n1==n2 )
+            .global CODE_EQ
 CODE_EQ:	pop		BL
 			pop		BH
 
@@ -470,6 +493,7 @@ CODE_EQ_END:
 
 
 			; ( n1 n2 -- n1!=n2 )
+            .global CODE_NEQ
 CODE_NEQ:	pop		BL
 			pop		BH
 
