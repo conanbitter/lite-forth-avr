@@ -13,7 +13,7 @@ WORD_\name:	.word	LAST_CORE
 			.byte 2b - 1b + 1
 			.endif
             .global	\name
-\name:		.word	CODE_\name
+\name:		.word	pm(CODE_\name)
 
 			.endm
 
