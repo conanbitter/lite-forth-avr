@@ -32,15 +32,30 @@ main:
 			clr		isCompiling
 
 			rcall	uartInit
+			sendMsg	LOGO_MSG
 
-loop:		sendMsg	hello_msg
-			rcall	uartGetc
-			sendMsg	hello_msg2
-			ldi		ZL, lo8(uart_buf)
-			ldi		ZH, hi8(uart_buf)
-			rcall	uartSend
+loop:		ldi		r16, 13
+			rcall	_EMIT
+			ldi		r16, 10
+			rcall	_EMIT
+			rcall	getWord
+			ldi		r16, 13
+			rcall	_EMIT
+			ldi		r16, 10
+			rcall	_EMIT
+			ldi		r17, hi8(word_buffer)
+			ldi		r16, lo8(word_buffer)
+			movw	r14, r16
+			clr		r17
+			mov		r16, r19
+			rcall	_FIND
+			rcall	_TCFA
+			movw	r16, ZL
+			andi	r17, 0b01111111
+			rcall	printVal
+
 			rjmp	loop
 
+			
+LOGO_MSG:	.asciz	"LITE [ FORTH ] AVR v0.1"
 			.align 2
-hello_msg:	.asciz	"\r\nHello World!\r\nEnter your name\r\n>"
-hello_msg2:	.asciz	"\r\nHello, "

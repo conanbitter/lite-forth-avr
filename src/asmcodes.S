@@ -42,6 +42,9 @@ _FIND_CORE:	tst		fndcWordLenH
 
 			ldi		ZL, lo8(LAST_CORE)
 			ldi		ZH,	hi8(LAST_CORE)
+			lpm		YL, Z+
+			lpm		YH, Z
+			movw	ZL, YL
 
 fndc_wl:	lpm		fndcNextDWordL, Z+ 	; next word
 			lpm		fndcNextDWordH, Z+
@@ -90,6 +93,7 @@ fndc_error:	ldi		r16, 1
 
 ;================== _FIND
 
+            .global _FIND
 _FIND:		rcall	_FIND_CORE
 			ori		ZH, FLAG_PM
 			ret
@@ -111,6 +115,7 @@ CODE_TCFA:	pop		ZL
 
 ; Z = _TCFA(Z)
 ; uses R16, R17
+            .global _TCFA
 _TCFA:		adiw	ZL, 2				; skip prev link
 			
 			rcall	readByte

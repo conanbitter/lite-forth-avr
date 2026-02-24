@@ -9,6 +9,8 @@ word_ptr:	.word   0
 code_ptr:	.word   0
 
 			.global word_buffer
+			.type	word_buffer, @object
+			.size	word_buffer, WORD_SIZE
 word_buffer:.space  WORD_SIZE
 
 			.text
