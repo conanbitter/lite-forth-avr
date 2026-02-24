@@ -274,8 +274,8 @@ CODE_NROT:	pop		CL
 			
 
 			; ( n1 n2 -- )
-            .global CODE_2DROP
-CODE_2DROP:	pop		AL
+            .global CODE_DROP2
+CODE_DROP2:	pop		AL
 			pop		AL
 
 			pop		AL
@@ -285,8 +285,8 @@ CODE_2DROP:	pop		AL
 
 
 			; ( n1 n2 n3 n4 -- n3 n4 n1 n2 )
-            .global CODE_2SWAP
-CODE_2SWAP:	pop		DL
+            .global CODE_SWAP2
+CODE_SWAP2:	pop		DL
 			pop		DH
 
 			pop		CL
@@ -314,8 +314,8 @@ CODE_2SWAP:	pop		DL
 
 
 			; ( n1 n2 -- n1 n2 n1 n2 )
-            .global CODE_2DUP
-CODE_2DUP:	in		YL, SPL
+            .global CODE_DUP2
+CODE_DUP2:	in		YL, SPL
     		in		YH, SPH
 
 			ld		BL, Y+
