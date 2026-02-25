@@ -1,6 +1,16 @@
             #include "m328Pdef.inc"
 			#include "global.inc"
 
+			.section .noinit
+
+			.global word_ptr
+word_ptr:	.word   0
+
+			.global code_ptr
+code_ptr:	.word   0
+
+			.text
+
 ;================== readCell
 
 ; [R17:R16] = readCell(Z)

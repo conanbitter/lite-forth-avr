@@ -1,14 +1,8 @@
 			#include "m328Pdef.inc"
+			#include "global.inc"
 
-			UART_BUFFER_SIZE = 80
 			UART_BAUDRATE    = 9600
 			UART_BPS         = (F_CPU/16/UART_BAUDRATE)-1
-
-            .section .noinit
-			.global uart_buf
-uart_buf:	.space	UART_BUFFER_SIZE
-uart_caret:	.byte	0
-uart_empty: .byte	0
 
 			.text
 ;================== uartInit
@@ -17,10 +11,10 @@ uart_empty: .byte	0
 ; uses R16
             .global uartInit
 uartInit:	ldi		r16, 0
-			sts		uart_caret, r16
+			sts		line_caret, r16
 			
 			ldi		r16, 1
-			sts		uart_empty, r16
+			sts		line_end, r16
 			
 			ldi		r16, lo8(UART_BPS)
 			sts		UBRR0L, r16
@@ -33,68 +27,43 @@ uartInit:	ldi		r16, 0
 			ret
 
 
-;================== uartGetc
+;================== uartInput
 
-; R16 = uartGetc()
+; line_buffer = uartInput()
 ; uses R17, R18, Y
-            .global uartGetc
-uartGetc:	ldi		YL, lo8(uart_buf)
-			ldi		YH, hi8(uart_buf)
-			
-			lds		r16, uart_empty
-			tst		r16
-			breq	uartgc_not_empty
-			
-			; buffer is empty, load new string
+            .global uartInput
+uartInput:	ldi		YL, lo8(line_buffer)
+			ldi		YH, hi8(line_buffer)
+
 			clr		r16
-uartgc_loop:
+uartin_loop:
 			lds		r17, UCSR0A			; wait for char
 			sbrs	r17, RXC0
-			rjmp	uartgc_loop
+			rjmp	uartin_loop
 			
-			lds		r18, UDR0
+			lds		r18, UDR0			; read char
+			cpi		r18, 0x0D			; is '\n'
+			breq	uartin_endloop
 
 #if defined(UART_ECHO) && (UART_ECHO == 1)
-uartgc_l2:	lds		r17, UCSR0A
+uartin_e:	lds		r17, UCSR0A
 			sbrs	r17, UDRE0
-			rjmp	uartgc_l2
-			
+			rjmp	uartin_e
+		
 			sts		UDR0, r18			
 #endif
 
 			st		Y+, r18
 			inc		r16
-			cpi		r18, 0x0D			; is '\n'
-			breq	uartgc_endloop
-			cpi		r16, UART_BUFFER_SIZE-1
-			brsh	uartgc_endloop
-			rjmp	uartgc_loop
-uartgc_endloop:
+			cpi		r16, LINE_SIZE-1	; check overflow
+			brsh	uartin_endloop
+			rjmp	uartin_loop
+uartin_endloop:
 			clr		r17
-			st		Y, r17
-			sts		uart_empty, r17
-			ldi		YL, lo8(uart_buf)
-			ldi		YH, hi8(uart_buf)
-			rjmp	uartgc_load_next
-			
-			; buffer is not empty, get next char
-uartgc_not_empty:
-			lds		r17, uart_caret
-			clr		r18
-			add		YL, r17
-			adc		YH, r18
-			
-uartgc_load_next:
-			ld		r16, Y+
-			ld		r18, Y
-			tst		r18
-			breq	uartgc_became_empty
-			inc		r17
-			sts		uart_caret, r17
-			ret
-uartgc_became_empty:
-			ldi		r18, 1
-			sts		uart_empty, r18			
+			st		Y, r17				; write zero at the end of the line
+			sts		line_caret, r17		; reset caret
+			sts		line_end, r17		; reset eol
+
 			ret
 
 

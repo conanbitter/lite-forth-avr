@@ -4,12 +4,15 @@
             RSTACK_SIZE    = 32 * 2
 			FLAG_PM        = 0b10000000
 			FLAG_IMMEDIATE = 0b10000000
+			FLAG_COMP_ONLY = 0b01000000
 			FLAG_HIDDEN    = 0b00100000
 			LENGTH_MASK    = 0b00011111
+			LINE_SIZE      = 80			
 			WORD_SIZE      = 32
 
-			_KEY  = uartGetc
-			_EMIT = uartPutc
+			_KEY   = uartGetc
+			_EMIT  = uartPutc
+			_INPUT = uartInput
 
 .macro      sendMsg msgAddr
 			ldi		ZL, lo8(\msgAddr)
@@ -25,4 +28,14 @@
 .macro		RPop	RH, RL
 			ld		\RL, -X
 			ld		\RH, -X
+.endm
+
+.macro		emiti	char
+			ldi		r16, \char
+			rcall	_EMIT
+.endm
+
+.macro		_CR
+			emiti	13
+			emiti	10
 .endm

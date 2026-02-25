@@ -32,13 +32,10 @@ main:
 			clr		isCompiling
 
 			rcall	uartInit
-			sendMsg	LOGO_MSG
+			sendMsg	MSG_LOGO
 
-loop:		ldi		r16, 13
-			rcall	_EMIT
-			ldi		r16, 10
-			rcall	_EMIT
-			rcall	getWord
+loop:		_CR
+/*			rcall	getWord
 			ldi		r16, 13
 			rcall	_EMIT
 			ldi		r16, 10
@@ -56,10 +53,16 @@ loop:		ldi		r16, 13
 			mov		r16, r17
 			rcall	printValHex
 			mov		r16, r5
-			rcall	printValHex
+			rcall	printValHex*/
+			rcall	_INPUT
+			sendMsg	MSG_OK
+			ldi		ZL, lo8(line_buffer)
+			ldi		ZH, hi8(line_buffer)
+			rcall	uartSend
 
 			rjmp	loop
 
 			
-LOGO_MSG:	.asciz	"LITE [ FORTH ] AVR v0.1"
+MSG_LOGO:	.asciz	"LITE [ FORTH ] AVR v0.1"
+MSG_OK:		.asciz	" ok\r\n"
 			.align	1

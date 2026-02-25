@@ -2,16 +2,18 @@
 
 			.section .noinit
 
-			.global word_ptr
-word_ptr:	.word   0
-
-			.global code_ptr
-code_ptr:	.word   0
+			.global line_buffer
+			.global	line_end
+			.global	line_caret
+line_buffer:.space	LINE_SIZE
+line_caret:	.byte	0			
+line_end:	.byte	0
 
 			.global word_buffer
 			.type	word_buffer, @object
 			.size	word_buffer, WORD_SIZE
 word_buffer:.space  WORD_SIZE
+
 
 			.text
 
@@ -104,7 +106,8 @@ printValHex:
 HEX_DIGITS:	.ascii	"0123456789ABCDEF"
 			.align	1
 
-
+			.global uartGetc
+uartGetc:	ret
 ;================== getWord
 
 			#define gwChar r16
