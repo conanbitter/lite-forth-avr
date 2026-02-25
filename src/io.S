@@ -106,8 +106,42 @@ printValHex:
 HEX_DIGITS:	.ascii	"0123456789ABCDEF"
 			.align	1
 
-			.global uartGetc
-uartGetc:	ret
+
+
+;================== _KEY
+
+; R16 = _KEY()
+; uses 
+			.global _KEY
+_KEY:		lds		r16, line_end		; is line ended?
+			tst		r16
+			breq	key_notempty
+			clr		r16					; line is ended, return zero
+			ret
+
+key_notempty:
+			ldi		YL, lo8(line_buffer)
+			ldi		YH, hi8(line_buffer)
+
+			lds		r16, line_caret
+			clr		r17
+
+			add		YL, r16
+			adc		YH, r17
+
+			inc		r16
+			sts		line_caret, r16
+
+			ld		r16, Y
+			tst		r16
+			brne	key_end
+
+			ldi		r17, 1
+			sts		line_end, r17
+
+key_end:	ret
+
+
 ;================== getWord
 
 			#define gwChar r16
@@ -121,8 +155,8 @@ getWord:	ldi		ZL, lo8(word_buffer)
 			ldi		ZH, hi8(word_buffer)
 			clr		gwLen
 			
-gw_start:	rcall	uartGetc
-			cpi		gwChar, '\'			; skip comments
+gw_start:	rcall	_KEY
+			cpi		gwChar, '\\'			; skip comments
 			breq	gw_skipcomment
 			cpi		gwChar, ' '			; skip spaces
 			breq	gw_start
@@ -134,10 +168,10 @@ gw_read:	cpi		gwChar, 'a'			; make the word uppercased
 			subi	gwChar, 'a'-'A'
 gw_nolw:	st		Z+, gwChar
 			inc		gwLen 				; size of the word
-			rcall	uartGetc
+			rcall	_KEY
 			cpi		gwChar, ' ' 		; end of the word
 			breq	gw_end
-			cpi		gwChar, 0x0D		; end of the line
+			tst		gwChar				; end of the line
 			breq	gw_end
 			cpi		gwLen, WORD_SIZE-1	; word too long
 			breq	gw_end
@@ -148,10 +182,10 @@ gw_end:		clr		gwChar				; zero termination
 			ret
 
 gw_skipcomment:
-			rcall	uartGetc
-			cpi		gwChar, 0x0D 		; '\n'
-			brne	gw_skipcomment
-			rjmp	gw_start
+			clr		gwLen
+			ldi		r16, 1
+			sts		line_end, r16
+			ret
 
 
 ;================== strToInt

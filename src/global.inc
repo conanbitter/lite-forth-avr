@@ -10,7 +10,6 @@
 			LINE_SIZE      = 80			
 			WORD_SIZE      = 32
 
-			_KEY   = uartGetc
 			_EMIT  = uartPutc
 			_INPUT = uartInput
 

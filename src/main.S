@@ -56,8 +56,9 @@ loop:		_CR
 			rcall	printValHex*/
 			rcall	_INPUT
 			sendMsg	MSG_OK
-			ldi		ZL, lo8(line_buffer)
-			ldi		ZH, hi8(line_buffer)
+			rcall	getWord
+			ldi		ZL, lo8(word_buffer)
+			ldi		ZH, hi8(word_buffer)
 			rcall	uartSend
 
 			rjmp	loop
