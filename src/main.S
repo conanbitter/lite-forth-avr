@@ -52,10 +52,14 @@ loop:		ldi		r16, 13
 			rcall	_TCFA
 			movw	r16, ZL
 			andi	r17, 0b01111111
-			rcall	printVal
+			mov		r5, r16
+			mov		r16, r17
+			rcall	printValHex
+			mov		r16, r5
+			rcall	printValHex
 
 			rjmp	loop
 
 			
 LOGO_MSG:	.asciz	"LITE [ FORTH ] AVR v0.1"
-			.align 2
+			.align	1

@@ -15,6 +15,8 @@ word_buffer:.space  WORD_SIZE
 
 			.text
 
+
+
 ;================== printVal
 
 			#define prvTmp   r22
@@ -60,11 +62,53 @@ prv_4:		rcall uartSend
 			ret
 
 
-			#define gwChar r16
-			#define gwLen  r19
+
+;================== printValHex
+
+			#define prhSaved r15
+			#define prhChar  r16
+
+; printValHex(R16)
+; uses R15, R17, Z
+			.global	printValHex
+printValHex:
+			mov		prhSaved, prhChar	; save input value
+
+			swap	prhChar				; get first nibble
+			andi	prhChar, 0b00001111
+
+			ldi		ZL, lo8(HEX_DIGITS)	; get according char
+			ldi		ZH, hi8(HEX_DIGITS)
+			add		ZL, prhChar
+			clr		r16
+			adc		ZH, r16
+			lpm		prhChar, Z
+
+			rcall	_EMIT
+
+			mov		prhChar, prhSaved	; restore input value
+
+			andi	prhChar, 0b00001111	; get second nibble
+
+			ldi		ZL, lo8(HEX_DIGITS)	; get according char
+			ldi		ZH, hi8(HEX_DIGITS)
+			add		ZL, prhChar
+			clr		r16
+			adc		ZH, r16
+			lpm		prhChar, Z
+
+			rcall	_EMIT
+
+			ret
+
+HEX_DIGITS:	.ascii	"0123456789ABCDEF"
+			.align	1
 
 
 ;================== getWord
+
+			#define gwChar r16
+			#define gwLen  r19
 
 ; word_buffer = getWord()
 ; R19 = len()
