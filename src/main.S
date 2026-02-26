@@ -33,33 +33,38 @@ main:
 
 			rcall	uartInit
 			sendMsg	MSG_LOGO
-
-loop:		_CR
-/*			rcall	getWord
-			ldi		r16, 13
-			rcall	_EMIT
-			ldi		r16, 10
-			rcall	_EMIT
+			_CR
+loop:		rcall	_INPUT
+			sendMsg	MSG_OK
+inloop:		rcall	getWord
+			lds		r19, word_len
+			tst		r19
+			breq	loop
+			mov		r16, r19
+			rcall	printValHex
+			emiti	' '
+			emiti	'"'
+			ldi		ZL, lo8(word_buffer)
+			ldi		ZH, hi8(word_buffer)
+			rcall	uartSend
+			emiti	'"'
+			emiti	' '
 			ldi		r17, hi8(word_buffer)
 			ldi		r16, lo8(word_buffer)
 			movw	r14, r16
 			clr		r17
-			mov		r16, r19
+			lds		r16, word_len
 			rcall	_FIND
-			rcall	_TCFA
+			rcall	_TCFA			
 			movw	r16, ZL
 			andi	r17, 0b01111111
 			mov		r5, r16
 			mov		r16, r17
 			rcall	printValHex
 			mov		r16, r5
-			rcall	printValHex*/
-			rcall	_INPUT
-			sendMsg	MSG_OK
-			rcall	getWord
-			ldi		ZL, lo8(word_buffer)
-			ldi		ZH, hi8(word_buffer)
-			rcall	uartSend
+			rcall	printValHex
+			_CR
+			rjmp	inloop
 
 			rjmp	loop
 

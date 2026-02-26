@@ -9,9 +9,11 @@ line_buffer:.space	LINE_SIZE
 line_caret:	.byte	0			
 line_end:	.byte	0
 
+			.global	word_len
 			.global word_buffer
 			.type	word_buffer, @object
 			.size	word_buffer, WORD_SIZE
+word_len:	.byte	0
 word_buffer:.space  WORD_SIZE
 
 
@@ -111,7 +113,7 @@ HEX_DIGITS:	.ascii	"0123456789ABCDEF"
 ;================== _KEY
 
 ; R16 = _KEY()
-; uses 
+; uses R17, Y
 			.global _KEY
 _KEY:		lds		r16, line_end		; is line ended?
 			tst		r16
@@ -142,47 +144,55 @@ key_notempty:
 key_end:	ret
 
 
+
 ;================== getWord
 
 			#define gwChar r16
-			#define gwLen  r19
+			#define gwLen  r18
 
-; word_buffer = getWord()
-; R19 = len()
-; uses R16, R17, R18, R19, Y, Z
+; word_buffer, word_len = getWord()
+; uses R16, R17, R18, Y, Z
             .global getWord
 getWord:	ldi		ZL, lo8(word_buffer)
 			ldi		ZH, hi8(word_buffer)
 			clr		gwLen
 			
 gw_start:	rcall	_KEY
-			cpi		gwChar, '\\'			; skip comments
+			cpi		gwChar, '\\'		; skip comments
 			breq	gw_skipcomment
 			cpi		gwChar, ' '			; skip spaces
 			breq	gw_start
 
-gw_read:	cpi		gwChar, 'a'			; make the word uppercased
+gw_read:	cpi		gwChar, ' ' 		; end of the word
+			breq	gw_end
+
+			tst		gwChar				; end of the line
+			breq	gw_end
+
+			cpi		gwChar, 'a'			; make the word uppercased
 			brlo	gw_nolw
 			cpi		gwChar, 'z'+1
 			brge	gw_nolw
+
 			subi	gwChar, 'a'-'A'
+
 gw_nolw:	st		Z+, gwChar
-			inc		gwLen 				; size of the word
-			rcall	_KEY
-			cpi		gwChar, ' ' 		; end of the word
-			breq	gw_end
-			tst		gwChar				; end of the line
-			breq	gw_end
+			inc		gwLen 				; increase size of the word
+
 			cpi		gwLen, WORD_SIZE-1	; word too long
 			breq	gw_end
+
+			rcall	_KEY
 			rjmp	gw_read
 
 gw_end:		clr		gwChar				; zero termination
 			st		Z+, gwChar
+			sts		word_len, gwLen		; save length
 			ret
 
 gw_skipcomment:
 			clr		gwLen
+			sts		word_len, gwLen		; save length
 			ldi		r16, 1
 			sts		line_end, r16
 			ret
