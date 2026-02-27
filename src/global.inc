@@ -38,3 +38,17 @@
 			emiti	13
 			emiti	10
 .endm
+
+.macro		save	reg, other:vararg
+			.ifnb	\reg
+			push	\reg
+			save	\other
+			.endif
+.endm
+
+.macro		restore	reg, other:vararg
+			.ifnb	\reg
+			restore	\other
+			pop		\reg
+			.endif
+.endm
