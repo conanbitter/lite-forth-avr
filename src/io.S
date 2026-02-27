@@ -22,7 +22,10 @@ word_buffer:.space  WORD_SIZE
 
 
 ;================== printVal
-
+;
+; in [R17:R16] - a 16 bit value
+;
+;==================
 			#define prvTmp   r22
 			#define prvSign  r23
 			#define prvInL   r16
@@ -31,10 +34,9 @@ word_buffer:.space  WORD_SIZE
 			#define prvDivH  r19
 			#define prvRem   r22
 
-; printVal([R17:R16])
-; uses R18, R19, R20, R21, R22, R23
             .global printVal
-printVal:	clr		prvSign
+printVal:	save	r18, r19, r22, r23
+			clr		prvSign
 			sbrs	prvInH, 7
 			rjmp	prv_3
 
@@ -62,20 +64,23 @@ prv_2:		rcall	div16_by10u
 			ldi		prvTmp, '-'
 			st		-Z, prvTmp
 
-prv_4:		rcall uartSend
+prv_4:		rcall	uartSend
+			restore	r18, r19, r22, r23
 			ret
 
 
 
 ;================== printValHex
-
+;
+; in R16 - an 8 bit value
+;
+;==================
 			#define prhSaved r15
 			#define prhChar  r16
 
-; printValHex(R16)
-; uses R15, R17, Z
 			.global	printValHex
 printValHex:
+			save	r15, r17, ZL, ZH
 			mov		prhSaved, prhChar	; save input value
 
 			swap	prhChar				; get first nibble
@@ -103,6 +108,7 @@ printValHex:
 
 			rcall	_EMIT
 
+			restore	r15, r17, ZL, ZH
 			ret
 
 HEX_DIGITS:	.ascii	"0123456789ABCDEF"
@@ -111,14 +117,17 @@ HEX_DIGITS:	.ascii	"0123456789ABCDEF"
 
 
 ;================== _KEY
-
-; R16 = _KEY()
-; uses R17, Y
+;
+; out R16 - input character
+;
+;==================
 			.global _KEY
-_KEY:		lds		r16, line_end		; is line ended?
+_KEY:		save	r17, YL, YH
+			lds		r16, line_end		; is line ended?
 			tst		r16
 			breq	key_notempty
 			clr		r16					; line is ended, return zero
+			restore	r17, YL, YH
 			ret
 
 key_notempty:
@@ -141,19 +150,22 @@ key_notempty:
 			ldi		r17, 1
 			sts		line_end, r17
 
-key_end:	ret
+key_end:	restore	r17, YL, YH
+			ret
 
 
 
 ;================== getWord
-
+;
+; out word_buffer, word_len
+;
+;==================
 			#define gwChar r16
 			#define gwLen  r18
 
-; word_buffer, word_len = getWord()
-; uses R16, R17, R18, Y, Z
             .global getWord
-getWord:	ldi		ZL, lo8(word_buffer)
+getWord:	save	r16, r18, ZL, ZH
+			ldi		ZL, lo8(word_buffer)
 			ldi		ZH, hi8(word_buffer)
 			clr		gwLen
 			
@@ -188,6 +200,7 @@ gw_nolw:	st		Z+, gwChar
 gw_end:		clr		gwChar				; zero termination
 			st		Z+, gwChar
 			sts		word_len, gwLen		; save length
+			restore	r16, r18, ZL, ZH
 			ret
 
 gw_skipcomment:
@@ -195,22 +208,28 @@ gw_skipcomment:
 			sts		word_len, gwLen		; save length
 			ldi		r16, 1
 			sts		line_end, r16
+			restore	r16, r18, ZL, ZH
 			ret
 
 
-;================== strToInt
 
+;================== strToInt
+;
+; in word_buffer
+;
+; out [R17:R16] - converted value
+;     isError = 1 if failed, otherwise 0
+;
+;==================
 			#define stiSign r15
 			#define stiAccL r16
 			#define stiAccH r17
 			#define stiChar r21
 			#define stiMulL r18
 
-; [R17:R16] = strToInt(word_buffer)
-; error = 1 if failed
-; uses R15, R18, R19, R20, R21, Y
-            .global strToInt
-strToInt:	ldi		YL, lo8(word_buffer)
+             .global strToInt
+strToInt:	save	r15, r18, r19, r21, YL, YH
+			ldi		YL, lo8(word_buffer)
 			ldi		YH, hi8(word_buffer)
 			clr		isError
 			clr		stiSign
@@ -232,7 +251,7 @@ sti_loop:	ld		stiChar, Y+
 			subi	stiChar, '0'
 			brlo	sti_error			; not a digit
 
-			call	mul16_by10u
+			rcall	mul16_by10u
 			movw	stiAccL, stiMulL
 
 			add		stiAccL, stiChar
@@ -247,8 +266,7 @@ sti_end:	tst		stiSign
 			neg		stiAccL
 			com		stiAccH	
 
-sti_ret:	ret
-
 sti_error:	ldi		stiChar, 1
 			mov		isError, stiChar
+sti_ret:	restore	r15, r18, r19, r21, YL, YH
 			ret

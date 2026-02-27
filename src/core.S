@@ -11,10 +11,16 @@ code_ptr:	.word   0
 
 			.text
 
-;================== readCell
 
-; [R17:R16] = readCell(Z)
-; Z += 2
+
+;================== readCell
+;
+; in Z - d-addr of the cell 
+;   (Z is pointing to the next cell after return)
+;
+; out [R17:R16] - value from the cell
+;
+;==================
             .global readCell
 readCell:	sbrs	ZH, 7
 			rjmp	rc_ram
@@ -28,10 +34,15 @@ rc_ram:		ld		r16, Z+				; Z is in RAM space
 			ret
 
 
-;================== readByte
 
-; [R16] = readByte(Z)
-; Z += 1
+;================== readByte
+;
+; in Z - d-addr of the byte
+;   (Z is pointing to the next byte after return)
+;
+; out R16 - readed value
+;
+;==================
             .global readByte
 readByte:	sbrs	ZH, 7
 			rjmp	rb_ram
@@ -41,6 +52,7 @@ readByte:	sbrs	ZH, 7
 			ret
 rb_ram:		ld		r16, Z+				; Z is in RAM space
 			ret
+
 
 
 ;================== NEXT
@@ -65,6 +77,7 @@ NEXT:		lds		ZL, word_ptr		; Z = WordPtr
 			ijmp						; jump Z
 
 
+
 ;================== CODE_DOCOL
 
             .global CODE_DOCOL
@@ -81,6 +94,7 @@ CODE_DOCOL:	lds		r16, word_ptr		; RPush WordPtr
 			rjmp	NEXT
 
 
+
 ;================== CODE_EXIT
 
             .global CODE_EXIT
@@ -90,6 +104,7 @@ CODE_EXIT:	RPop	r17, r16
 			sts		word_ptr+1, r17
 
 			rjmp	NEXT
+
 
 
 ;================== CODE_BRANCH
@@ -107,6 +122,7 @@ CODE_BRANCH:lds		ZL, word_ptr			; Z = WordPtr
 			sts		word_ptr+1, r17
 			
 			rjmp NEXT
+
 
 
 ;================== CODE_0BRANCH

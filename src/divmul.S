@@ -1,5 +1,11 @@
-;================== div16u
+			#include "global.inc"
 
+;================== div16u
+;
+; [R17:R16] = [R17:R16] / [R19:R18]
+; [R15:R14] = [R17:R16] mod [R19:R18]
+;
+;==================
 			#define drem16uL r14
 			#define drem16uH r15
 			#define dres16uL r16
@@ -10,17 +16,16 @@
 			#define dv16uH   r19
 			#define dcnt16u  r20
 
-; [R17:R16] = [R17:R16] / [R19:R18]
-; [R15:R14] = [R17:R16] mod [R19:R18]
-; uses R20
             .global div16u
-div16u:		clr		drem16uL			; clear remainder Low byte
+div16u:		save	r20
+			clr		drem16uL			; clear remainder Low byte
 			sub		drem16uH, drem16uH	; clear remainder High byte and	carry
 			ldi		dcnt16u, 17			; init loop counter
 d16u_1:		rol		dd16uL				; shift left dividend
 			rol		dd16uH
 			dec		dcnt16u				; decrement counter
 			brne	d16u_2				; if done
+			restore	r20
 			ret							; return
 d16u_2:		rol		drem16uL			; shift dividend into remainder
 			rol		drem16uH
@@ -35,8 +40,13 @@ d16u_3:		sec							; set carry to be shifted into result
 			rjmp	d16u_1
 
 
-;================== div16s
 
+;================== div16s
+;
+; [R17:r16] = [R17:R16] / [R19:R18]
+; [R15:r14] = [R17:R16] mod [R19:R18]
+;
+;==================
 			#define d16s     r13
 			#define drem16sL r14
 			#define drem16sH r15
@@ -48,11 +58,9 @@ d16u_3:		sec							; set carry to be shifted into result
 			#define dv16sH   r19
 			#define dcnt16s  r20
 
-; [R17:r16] = [R17:R16] / [R19:R18]
-; [R15:r14] = [R17:R16] mod [R19:R18]
-; uses R13, R20
             .global div16s
-div16s:		mov		d16s, dd16sH		; move dividend High to sign register
+div16s:		save	r13, r20
+			mov		d16s, dd16sH		; move dividend High to sign register
 			eor		d16s, dv16sH		; xor divisor High with sign register
 			sbrs	dd16sH, 7			; if MSB in dividend set
 			rjmp	d16s_1
@@ -69,7 +77,6 @@ d16s_1:		sbrs	dv16sH, 7			; if MSB in divisor set
 d16s_2:		clr		drem16sL			; clear remainder Low byte
 			sub		drem16sH,drem16sH	; clear remainder High byte and carry
 			ldi		dcnt16s, 17			; init loop counter
-
 d16s_3:		rol		dd16sL				; shift left dividend
 			rol		dd16sH
 			dec		dcnt16s				; decrement counter
@@ -80,7 +87,8 @@ d16s_3:		rol		dd16sL				; shift left dividend
 			com		dres16sL
 			subi	dres16sL, lo8(-1)
 			sbci	dres16sH, hi8(-1)
-d16s_4:		ret							; return
+d16s_4:		restore	r13, r20
+			ret							; return
 d16s_5:		rol		drem16sL			; shift dividend into remainder
 			rol		drem16sH
 			sub		drem16sL,dv16sL		; remainder = remainder - divisor
@@ -94,8 +102,13 @@ d16s_6:		sec							; set carry to be shifted into result
 			rjmp	d16s_3
 
 
-;================== div16_by10u
 
+;================== div16_by10u
+;
+; [R19:R18] = [R17:R16] / 10
+; [R22]     = [R17:R16] mod 10
+;
+;==================
 			#define d10in16L  r16
 			#define d10in16H  r17
 			#define d10out16L r18
@@ -104,11 +117,9 @@ d16s_6:		sec							; set carry to be shifted into result
 			#define d10tmpH   r21
 			#define d10rem    r22
 
-; [R19:R18] = [R17:R16] / 10
-; [R22]     = [R17:R16] mod 10
-; uses R20, R21
+			.global div16_by10u
 div16_by10u:
-            .global div16_by10u
+            save	r20, r21
 			; RES = (IN * 0xCCCD) >> 16
 			ldi		d10tmpL, lo8(0xCCCD)
 			ldi		d10tmpH, hi8(0xCCCD)
@@ -154,25 +165,30 @@ div16_by10u:
 			mov		d10rem, d10in16L
 			sub		d10rem, d10tmpL
     		
+			restore	r20, r21
 			ret
 
 
-;================== mul16_by10u
 
+;================== mul16_by10u
+;
+; [R19:R18] = [R17:R16] * 10
+;
+;==================
 			#define m10in16L  r16
 			#define m10in16H  r17
 			#define m10out16L r18
 			#define m10out16H r19
 			#define m10tmp    r20
 
-; [R19:R18] = [R17:R16] * 10
-; uses R20
             .global mul16_by10u
 mul16_by10u:
+			save	r20
 			ldi		m10tmp, 10
 			mul		m10in16L, r20
 			movw	m10out16L, r0
 			mul		m10in16H, r20
 			add		m10out16H, r0
 
+			restore	r20
 			ret

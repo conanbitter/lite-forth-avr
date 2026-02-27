@@ -12,7 +12,7 @@
             #include "m328Pdef.inc"
             #include "global.inc"
 
-			;( *chars len -- d-addr )
+			; ( *chars len -- d-addr )
             .global CODE_FIND
 CODE_FIND:	pop		r16					; len
 			pop		r17
@@ -23,7 +23,15 @@ CODE_FIND:	pop		r16					; len
 			push	ZL
 
 
+
 ;================== _FIND_CORE
+;
+; in [r15:r14] - address of the string
+;    [r17:r16] - 16 bit length of the string
+;
+; out Z - d-addr of the found word or 0
+;
+;==================
 
 			#define fndcWordPtrL   r14
 			#define fndcWordLenL   r16
@@ -35,9 +43,8 @@ CODE_FIND:	pop		r16					; len
 			#define fndcDChar      r21
 			#define fndcTmp        r16
 
-; Z = &find(chars=[r15:r14], len=[r17:r16]).codeword
-; uses	R18, R19, R20, R21, Y
-_FIND_CORE:	tst		fndcWordLenH
+_FIND_CORE:	save	r18, r19, r20, r21, YL, YH
+			tst		fndcWordLenH
 			brne	fndc_error
 
 			ldi		ZL, lo8(LAST_CORE)
@@ -82,13 +89,16 @@ fndc_found:	sbrc	fndcWordLenL, 0
 			lpm		fndcTmp, Z
 			sub		ZL, fndcTmp
 			sbci	ZL, 3				; - sizeof(prev) - sizeof(right_len)
+			restore	r18, r19, r20, r21, YL, YH
 			ret
 
 fndc_error:	ldi		r16, 1
 			mov		isError, r16
 			clr		ZL
 			clr		ZH
+			restore	r18, r19, r20, r21, YL, YH
 			ret
+
 
 
 ;================== _FIND
@@ -97,6 +107,7 @@ fndc_error:	ldi		r16, 1
 _FIND:		rcall	_FIND_CORE
 			ori		ZH, FLAG_PM
 			ret
+
 
 
 ;================== CODE_TCFA
@@ -116,7 +127,8 @@ CODE_TCFA:	pop		ZL
 ; Z = _TCFA(Z)
 ; uses R16, R17
             .global _TCFA
-_TCFA:		adiw	ZL, 2				; skip prev link
+_TCFA:		save	r16, r17
+			adiw	ZL, 2				; skip prev link
 			
 			rcall	readByte
 			clr		r17
@@ -129,7 +141,10 @@ _TCFA:		adiw	ZL, 2				; skip prev link
 
 			adiw	ZL, 1				; skip right len
 
+			restore	r16, r17
 			ret
+
+
 
 ;================== other codes
 

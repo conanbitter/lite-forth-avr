@@ -5,12 +5,15 @@
 			UART_BPS         = (F_CPU/16/UART_BAUDRATE)-1
 
 			.text
-;================== uartInit
 
-; uartInit()
-; uses R16
+
+
+;================== uartInit
+;
+;==================
             .global uartInit
-uartInit:	ldi		r16, 0
+uartInit:	save	r16
+			ldi		r16, 0
 			sts		line_caret, r16
 			
 			ldi		r16, 1
@@ -24,15 +27,20 @@ uartInit:	ldi		r16, 0
 			
 			ldi		r16, (1<<RXEN0)|(1<<TXEN0)
 			sts		UCSR0B, r16
+
+			restore	r16
 			ret
 
 
-;================== uartInput
 
-; line_buffer = uartInput()
-; uses R17, R18, Y
+;================== uartInput
+;
+; in line_buffer
+;
+;==================
             .global uartInput
-uartInput:	ldi		YL, lo8(line_buffer)
+uartInput:	save	r17, r18, YL, YH
+			ldi		YL, lo8(line_buffer)
 			ldi		YH, hi8(line_buffer)
 
 			clr		r16
@@ -64,28 +72,36 @@ uartin_endloop:
 			sts		line_caret, r17		; reset caret
 			sts		line_end, r17		; reset eol
 
+			restore	r17, r18, YL, YH
 			ret
 
 
-;================== uartPutc
 
-; uartPutc(R16)
-; uses R17
+;================== uartPutc
+;
+; in R16 - char
+;
+;==================
             .global uartPutc
-uartPutc:	lds		r17, UCSR0A
+uartPutc:	save	r17
+			lds		r17, UCSR0A
 			sbrs	r17, UDRE0
 			rjmp	uartPutc
 			
 			sts		UDR0, r16
+			restore	r17
 			ret
 
 
-;================== uartSendPm
 
-; uartSendPm(Z)
-; uses R16, R17
+;================== uartSendPm
+;
+; in Z - PM address of the string
+;
+;==================
             .global uartSendPm
-uartSendPm:	lpm		r16, Z+
+uartSendPm:	save	r16, r17
+			lpm		r16, Z+
 			tst		r16
 			breq	uartm_end
 			
@@ -96,15 +112,19 @@ uartm_wait:	lds		r17, UCSR0A
 			sts		UDR0, r16
 			rjmp	uartSendPm
 			
-uartm_end:	ret
+uartm_end:	restore	r16, r17
+			ret
+
 
 
 ;================== uartSend
-
-; uartSend(Z)
-; uses R16, R17
+;
+; in Z - RAM address of the string
+;
+;==================
             .global uartSend
-uartSend:	ld		r16, Z+
+uartSend:	save	r16, r17
+			ld		r16, Z+
 			tst		r16
 			breq	uarts_end
 			
@@ -115,4 +135,5 @@ uarts_wait:	lds		r17, UCSR0A
 			sts		UDR0, r16
 			rjmp	uartSend
 			
-uarts_end:	ret
+uarts_end:	restore	r16, r17
+			ret

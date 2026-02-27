@@ -31,12 +31,6 @@ main:
             clr		isError
 			clr		isCompiling
 
-			save	r16, r17, r18, r19, r20, r21, r22, r23
-
-			nop
-
-			restore	r16, r17, r18, r19, r20, r21, r22, r23
-
 			rcall	uartInit
 			sendMsg	MSG_LOGO
 			_CR
