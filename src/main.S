@@ -37,10 +37,9 @@ main:
 loop:		rcall	_INPUT
 			sendMsg	MSG_OK
 inloop:		rcall	getWord
-			lds		r19, word_len
-			tst		r19
+			lds		r16, word_len
+			tst		r16
 			breq	loop
-			mov		r16, r19
 			rcall	printValHex
 			emiti	' '
 			emiti	'"'
@@ -55,7 +54,9 @@ inloop:		rcall	getWord
 			clr		r17
 			lds		r16, word_len
 			rcall	_FIND
-			rcall	_TCFA			
+			tst		isError
+			brne	isnum
+			rcall	_TCFA
 			movw	r16, ZL
 			andi	r17, 0b01111111
 			mov		r5, r16
@@ -63,7 +64,18 @@ inloop:		rcall	getWord
 			rcall	printValHex
 			mov		r16, r5
 			rcall	printValHex
-			_CR
+			rjmp	nxt
+isnum:		rcall	strToInt
+			tst		isError
+			brne	iserr
+			mov		r5, r16
+			mov		r16, r17
+			rcall	printValHex
+			mov		r16, r5
+			rcall	printValHex
+			rjmp	nxt
+iserr:		sendMsg	MSG_UNK
+nxt:		_CR
 			rjmp	inloop
 
 			rjmp	loop
@@ -71,4 +83,5 @@ inloop:		rcall	getWord
 			
 MSG_LOGO:	.asciz	"LITE [ FORTH ] AVR v0.1"
 MSG_OK:		.asciz	" ok\r\n"
+MSG_UNK:	.asciz	" ? "
 			.align	1
