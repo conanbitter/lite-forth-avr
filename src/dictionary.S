@@ -32,6 +32,7 @@ WORD_\name :.word	prev_word
 			asmword TCFA,  ">CFA"
 			asmword KEY,   "KEY"
 			asmword EMIT,  "EMIT"
+			asmword	DOT,   "."
 			asmword WORD,  "WORD"
 			asmword DROP,  "DROP"
 			asmword SWAP,  "SWAP"

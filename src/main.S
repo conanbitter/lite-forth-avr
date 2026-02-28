@@ -34,12 +34,12 @@ main:
 			rcall	uartInit
 			sendMsg	MSG_LOGO
 			_CR
-loop:		ldi		r16, lo8(dummy2)
+loop:		rcall	_INPUT
+inloop:		ldi		r16, lo8(dummy2)
 			sts		word_ptr, r16
 			ldi		r16, hi8(dummy2)
 			sts		word_ptr+1, r16
-			rcall	_INPUT
-inloop:		rcall	getWord
+			rcall	getWord
 			lds		r16, word_len
 			tst		r16
 			breq	nxtline
@@ -58,8 +58,8 @@ inloop:		rcall	getWord
 isnum:		rcall	strToInt
 			tst		isError
 			brne	iserr
-			push	r16
 			push	r17
+			push	r16
 			rjmp	nxt
 iserr:		sendMsg	MSG_UNK
 nxt:		rjmp	inloop

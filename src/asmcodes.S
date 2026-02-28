@@ -168,6 +168,19 @@ _TWHA:		save	r17
 			restore	r17
 			ret
 
+
+;================== CODE_DOT
+			.global	CODE_DOT
+CODE_DOT:	emiti	' '
+
+			pop		r16
+			pop		r17
+			rcall	printVal
+			
+			rjmp	NEXT
+
+
+
 ;================== other codes
 
 			#define AL r16
