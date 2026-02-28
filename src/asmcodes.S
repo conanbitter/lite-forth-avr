@@ -19,6 +19,7 @@ CODE_FIND:	pop		r16					; len
 			pop		r14					; char pointer
 			pop		r15
 			rcall	_FIND
+			rcall	_TWHA
 			push	ZH
 			push	ZL
 
@@ -86,9 +87,11 @@ fndc_next2:	movw	ZL, fndcNextDWordL
 
 fndc_found:	sbrc	fndcWordLenL, 0
 			adiw	ZL, 1
-			lpm		fndcTmp, Z
-			sub		ZL, fndcTmp
-			sbci	ZL, 3				; - sizeof(prev) - sizeof(right_len)
+			adiw	ZL, 1
+			;lpm		fndcTmp, Z
+			;sub		ZL, fndcTmp
+			;sbci	ZL, 3				; - sizeof(prev) - sizeof(right_len)
+			clr		isError
 			restore	r18, r19, r20, r21, YL, YH
 			ret
 
@@ -125,7 +128,6 @@ CODE_TCFA:	pop		ZL
 
 
 ; Z = _TCFA(Z)
-; uses R16, R17
             .global _TCFA
 _TCFA:		save	r16, r17
 			adiw	ZL, 2				; skip prev link
@@ -145,6 +147,26 @@ _TCFA:		save	r16, r17
 			ret
 
 
+
+;================== _TWHA
+; Word head from CFA
+;
+; Z = _TWHA(Z)
+;
+;==================
+			.global	_TWHA
+_TWHA:		save	r17
+			sbiw	ZL, 1				; go to right len
+			rcall	readByte
+
+			clr		r17
+			sub		ZL, r16
+			sbc		ZH, r17
+
+			sbiw	ZL, 4				; 1b right len + 1b left len + 2b prev link 
+
+			restore	r17
+			ret
 
 ;================== other codes
 

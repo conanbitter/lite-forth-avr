@@ -56,7 +56,8 @@ inloop:		rcall	getWord
 			rcall	_FIND
 			tst		isError
 			brne	isnum
-			rcall	_TCFA
+			;rcall	_TCFA
+			rcall	_TWHA
 			movw	r16, ZL
 			andi	r17, 0b01111111
 			mov		r5, r16
