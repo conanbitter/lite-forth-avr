@@ -2,7 +2,7 @@
 			#define isCompiling r3
 
             RSTACK_SIZE    = 32 * 2
-			FLAG_PM        = 0b10000000
+			FLAG_RAM       = 0b10000000
 			FLAG_IMMEDIATE = 0b10000000
 			FLAG_COMP_ONLY = 0b01000000
 			FLAG_HIDDEN    = 0b00100000
