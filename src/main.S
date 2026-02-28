@@ -62,6 +62,7 @@ isnum:		rcall	strToInt
 			push	r16
 			rjmp	nxt
 iserr:		sendMsg	MSG_UNK
+			rjmp	loop
 nxt:		rjmp	inloop
 nxtline:	sendMsg	MSG_OK
 			rjmp	loop
