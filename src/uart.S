@@ -84,9 +84,9 @@ uartin_endloop:
 ;==================
             .global uartPutc
 uartPutc:	save	r17
-			lds		r17, UCSR0A
+uartpc_loop:lds		r17, UCSR0A
 			sbrs	r17, UDRE0
-			rjmp	uartPutc
+			rjmp	uartpc_loop
 			
 			sts		UDR0, r16
 			restore	r17
@@ -101,7 +101,7 @@ uartPutc:	save	r17
 ;==================
             .global uartSendPm
 uartSendPm:	save	r16, r17
-			lpm		r16, Z+
+uartm_loop:	lpm		r16, Z+
 			tst		r16
 			breq	uartm_end
 			
@@ -110,7 +110,7 @@ uartm_wait:	lds		r17, UCSR0A
 			rjmp	uartm_wait
 			
 			sts		UDR0, r16
-			rjmp	uartSendPm
+			rjmp	uartm_loop
 			
 uartm_end:	restore	r16, r17
 			ret
@@ -124,7 +124,7 @@ uartm_end:	restore	r16, r17
 ;==================
             .global uartSend
 uartSend:	save	r16, r17
-			ld		r16, Z+
+uarts_loop:	ld		r16, Z+
 			tst		r16
 			breq	uarts_end
 			
@@ -133,7 +133,7 @@ uarts_wait:	lds		r17, UCSR0A
 			rjmp	uarts_wait
 			
 			sts		UDR0, r16
-			rjmp	uartSend
+			rjmp	uarts_loop
 			
 uarts_end:	restore	r16, r17
 			ret
