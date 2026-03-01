@@ -1,3 +1,5 @@
+#ifndef MDEF_INC
+#define MDEF_INC
 ; ***** I/O REGISTER DEFINITIONS *****************************************
 ; NOTE:
 ; Definitions marked "MEMORY MAPPED"are extended I/O ports
@@ -916,3 +918,4 @@ SPMRaddr	= 0x0032	; Store Program Memory Read
 INT_VECTORS_SIZE	= 52	; size in words
 
 ; ***** END OF FILE ******************************************************
+#endif

@@ -1,7 +1,12 @@
+#ifndef	GLOBAL_INC
+#define GLOBAL_INC
+			#include "m328Pdef.inc"
+
 			#define isError     r2
 			#define isCompiling r3
 
             RSTACK_SIZE    = 32 * 2
+			STACK_BOTTOM   = RAMEND-RSTACK_SIZE-1
 			FLAG_RAM       = 0b10000000
 			FLAG_IMMEDIATE = 0b10000000
 			FLAG_COMP_ONLY = 0b01000000
@@ -52,3 +57,5 @@
 			pop		\reg
 			.endif
 .endm
+
+#endif
