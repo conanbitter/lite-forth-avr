@@ -9,7 +9,6 @@
 ;                    ^
 ;                    stack pointer
 
-            #include "m328Pdef.inc"
             #include "global.inc"
 
 			; ( *chars len -- d-addr )
@@ -181,6 +180,25 @@ CODE_DOT:	emiti	' '
 
 
 
+;================== CODE_PSTACK
+			.global	CODE_PSTACK
+CODE_PSTACK:
+			in		YL, SPL
+			in		YH, SPH
+			adiw	YL, 1
+pst_loop:	cpi		YL, lo8(STACK_BOTTOM)
+			brlo	pst_read
+			cpi 	YH, hi8(STACK_BOTTOM)
+			brge	pst_end
+pst_read:	emiti	' '
+			ld		r16, Y+
+			ld		r17, Y+
+			rcall 	printVal
+			rjmp	pst_loop
+
+pst_end:	rjmp	NEXT
+
+
 ;================== other codes
 
 			#define AL r16
@@ -271,7 +289,7 @@ CODE_DUP:	pop		AL
             .global CODE_OVER
 CODE_OVER:	in		YL,	SPL
     		in		YH, SPH
-    		adiw	YL, 2
+    		adiw	YL, 3
 
     		ld		AL, Y+
     		ld		AH, Y
@@ -372,6 +390,7 @@ CODE_SWAP2:	pop		DL
             .global CODE_DUP2
 CODE_DUP2:	in		YL, SPL
     		in		YH, SPH
+			adiw	YL, 1
 
 			ld		BL, Y+
 			ld		BH, Y+
@@ -392,13 +411,14 @@ CODE_DUP2:	in		YL, SPL
             .global CODE_QDUP
 CODE_QDUP:	in		YL, SPL
     		in		YH, SPH
+			adiw	YL, 1
 			ld		AL, Y+
     		ld		AH, Y+
 
 			movw	BL, AL
 			or		BL, BH
 			tst		BL
-			brne	CODE_QDUP_ELSE
+			breq	CODE_QDUP_ELSE
 
 			push	AH
 			push	AL

@@ -33,6 +33,7 @@ WORD_\name :.word	prev_word
 			asmword KEY,   "KEY"
 			asmword EMIT,  "EMIT"
 			asmword	DOT,   "."
+			asmword	PSTACK,".S"
 			asmword WORD,  "WORD"
 			asmword DROP,  "DROP"
 			asmword SWAP,  "SWAP"
