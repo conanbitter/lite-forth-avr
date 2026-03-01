@@ -266,6 +266,8 @@ sti_end:	tst		stiSign
 			neg		stiAccL
 			com		stiAccH	
 
+			rjmp	sti_ret
+
 sti_error:	ldi		stiChar, 1
 			mov		isError, stiChar
 sti_ret:	restore	r15, r18, r19, r21, YL, YH
