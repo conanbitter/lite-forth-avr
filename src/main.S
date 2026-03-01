@@ -52,6 +52,8 @@ inloop:		ldi		r16, lo8(dummy2)
 			tst		isError
 			brne	isnum
 			;rcall	_TCFA
+			sts		code_ptr, ZL
+			sts		code_ptr+1, ZH
 			rcall	readCell
 			movw	ZL, r16
 			ijmp

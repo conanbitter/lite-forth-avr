@@ -22,13 +22,37 @@ WORD_\name :.word	prev_word
 			.endm
 
 
+
+			.macro  forthword name, text, flags=0
+
+			.global	WORD_\name
+			.type	WORD_\name ,@object
+			.align	1
+WORD_\name :.word	prev_word
+			.set	prev_word, WORD_\name
+			.byte	(2f - 1f) | \flags
+1:			.ascii	"\text"
+2:			.ifeq (2b - 1b) % 2
+			.byte 2b - 1b
+			.else
+			.byte 0
+			.byte 2b - 1b + 1
+			.endif
+            .global	\name
+			.type	\name ,@object
+\name :		.word	pm(CODE_DOCOL)
+
+			.endm
+
+
 			.set prev_word, 0
 
 			.text
 
 ;=========== ASMWORDS
 
-            asmword FIND,  "FIND"
+            asmword	EXIT,  "EXIT"
+			asmword FIND,  "FIND"
 			asmword TCFA,  ">CFA"
 			asmword KEY,   "KEY"
 			asmword EMIT,  "EMIT"
@@ -55,6 +79,11 @@ WORD_\name :.word	prev_word
 			asmword SUB,   "-"
 			asmword EQ,    "="
 			asmword NEQ,   "<>"
+
+			forthword DOUBLE, "DOUBLE"
+			.word	DUP
+			.word	ADD
+			.word	EXIT
 
 
 			.global LAST_CORE
