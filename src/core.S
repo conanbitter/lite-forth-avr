@@ -110,25 +110,24 @@ CODE_EXIT:	RPop	r17, r16
 ;================== CODE_BRANCH
 
             .global CODE_BRANCH
-CODE_BRANCH:lds		ZL, word_ptr			; Z = WordPtr
+CODE_BRANCH:lds		ZL, word_ptr		; Z = WordPtr
 			lds		ZH, word_ptr+1
 			rcall	readCell			; [r17:r16] = load (addr=Z)
 			
-			sbiw	ZL, 2				; go back to offset cell
 			add		ZL, r16				; add offset to WordPtr
 			adc		ZH, r17
 			
-			sts		word_ptr, r16
-			sts		word_ptr+1, r17
+			sts		word_ptr, ZL
+			sts		word_ptr+1, ZH
 			
 			rjmp NEXT
 
 
 
-;================== CODE_0BRANCH
+;================== CODE_ZBRANCH
 
-            .global CODE_0BRANCH
-CODE_0BRANCH:
+            .global CODE_ZBRANCH
+CODE_ZBRANCH:
 			pop		r16					; if 0 was on stack
 			pop		r17
 
@@ -143,5 +142,22 @@ CODE_0BRANCH:
 
 			sts		word_ptr, r24
 			sts		word_ptr+1, r25
+
+			rjmp	NEXT
+
+
+
+;================== CODE_LIT
+
+			.global	CODE_LIT
+CODE_LIT:	lds		ZL, word_ptr			; Z = WordPtr
+			lds		ZH, word_ptr+1
+			rcall	readCell				; [r17:r16] = load (addr=Z)
+
+			push	r17						; push value to the stack
+			push	r16
+
+			sts		word_ptr, ZL			; store next address to word_ptr
+			sts		word_ptr+1, ZH
 
 			rjmp	NEXT
