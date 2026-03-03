@@ -70,7 +70,7 @@ nxtline:	sendMsg	MSG_OK
 			rjmp	loop
 
 			
-MSG_LOGO:	.ascii	"LITE [ FORTH ] AVR v0.1 (build ", __DATE__, " ", __TIME__, ")\0"
+MSG_LOGO:	.ascii	"LITE [ FORTH ] AVR v0.1 (build ", BUILD_ID, ")\0"
 			.align	1
 
 dummy:		.word	pm(inloop)

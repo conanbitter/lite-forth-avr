@@ -8,6 +8,12 @@ UART_ECHO = 1
 
 FILES = main.S dictionary.S errors.S uart.S io.S divmul.S core.S asmcodes.S
 
+ifeq ($(OS),Windows_NT)
+    GIT_BUILD := $(shell git rev-parse --short HEAD 2> nul)
+else
+    GIT_BUILD := $(shell git rev-parse --short HEAD 2> /dev/null)
+endif
+
 # Common section
 
 # Directories
@@ -27,7 +33,7 @@ OBJS_DEBUG := $(patsubst %.S,$(BUILD_DIR)/debug/%.o,$(FILES))
 
 # Compiler setings
 INC_FLAG := -I$(SRC_DIR)
-ASFLAGS := $(INC_FLAG) -DF_CPU=$(F_CPU) -DUART_ECHO=$(UART_ECHO) -mmcu=$(MCU) -x assembler-with-cpp -c -nostdlib -nostartfiles
+ASFLAGS := $(INC_FLAG) -DF_CPU=$(F_CPU) -DUART_ECHO=$(UART_ECHO) -DBUILD_ID="\"$(GIT_BUILD)\"" -mmcu=$(MCU) -x assembler-with-cpp -c -nostdlib -nostartfiles
 ASFLAGS_DEBUG := $(ASFLAGS) -g -Wa,--gstabs -Wa,-g
 LDFLAGS := $(INC_FLAG) -mmcu=$(MCU) -nostdlib -nostartfiles # -m $(ARCH) 
 
