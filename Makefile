@@ -6,7 +6,7 @@ ARCH = avr5
 MACHINE = uno
 UART_ECHO = 1
 
-FILES = main.S dictionary.S uart.S io.S divmul.S core.S asmcodes.S
+FILES = main.S dictionary.S errors.S uart.S io.S divmul.S core.S asmcodes.S
 
 # Common section
 

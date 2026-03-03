@@ -91,6 +91,7 @@ WORD_\name :.word	prev_word
 			asmword LIT,     "LIT"
 			asmword	BRANCH,  "BRANCH"
 			asmword ZBRANCH, "0BRANCH"
+			asmword	ERRDISP, "ERRDISP"
 			asmword DROP,    "DROP"
 			asmword SWAP,    "SWAP"
 			asmword DUP,     "DUP"
