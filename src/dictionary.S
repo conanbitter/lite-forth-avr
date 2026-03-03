@@ -1,3 +1,5 @@
+			#include "global.inc"
+
 ;=========== MACROS
 
 			.macro  asmword name, text, flags=0
@@ -45,6 +47,33 @@ WORD_\name :.word	prev_word
 			.endm
 
 
+
+			.macro	pword name arg
+			.word	\name + FLAG_PM16
+			.ifnb	\arg
+			.word	\arg
+			.endif
+			.endm
+
+
+			.macro	pconst arg
+			.word	LIT + FLAG_PM16
+			.word	\arg
+			.endm
+
+
+			.macro	pbr arg
+			.word	BRANCH + FLAG_PM16
+			.word	\arg - . - 2
+			.endm
+
+
+			.macro	pzbr arg
+			.word	ZBRANCH + FLAG_PM16
+			.word	\arg - . - 2
+			.endm
+
+
 			.set prev_word, 0
 
 			.text
@@ -84,36 +113,30 @@ WORD_\name :.word	prev_word
 			asmword NEQ,     "<>"
 
 			forthword DOUBLE, "DOUBLE"
-			.word	DUP
-			.word	ADD
-			.word	EXIT
+			pword	DUP
+			pword	ADD
+			pword	EXIT
 
 			forthword ADDTHREE, "ADD3"
-			.word	LIT
-			.word	3
-			.word	ADD
-			.word	EXIT
+			pconst	3
+			pword	ADD
+			pword	EXIT
 
 			forthword BRTST, "BRTST"
-			.word	LIT
-			.word	4
-			.word	DOT
-			.word	BRANCH
-			.word	-10
-			.word	EXIT
+1:			pconst	4
+			pword	DOT
+			pbr		1b
+			pword	EXIT
 
 			forthword ZBRTST, "BRTST0"
-			.word	LIT
-			.word	11
-			.word	DEC
-			.word	DUP
-			.word	DOT
-			.word	DUP
-			.word	ZBRANCH
-			.word	4
-			.word	BRANCH
-			.word	-16
-			.word	EXIT
+			pconst	11
+1:			pword	DEC
+			pword	DUP
+			pword	DOT
+			pword	DUP
+			pzbr	2f
+			pbr		1b
+2:			pword	EXIT
 
 			.global LAST_CORE
 			.type	LAST_CORE, @object

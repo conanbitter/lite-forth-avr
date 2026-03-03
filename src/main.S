@@ -37,7 +37,7 @@ main:
 loop:		rcall	_INPUT
 inloop:		ldi		r16, lo8(dummy2)
 			sts		word_ptr, r16
-			ldi		r16, hi8(dummy2)
+			ldi		r16, hi8(dummy2+FLAG_PM16)
 			sts		word_ptr+1, r16
 			rcall	getWord
 			lds		r16, word_len
@@ -76,4 +76,4 @@ MSG_UNK:	.asciz	" ? "
 			.align	1
 
 dummy:		.word	pm(inloop)
-dummy2:		.byte	dummy
+dummy2:		.word	dummy + FLAG_PM16

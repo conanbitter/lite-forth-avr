@@ -107,7 +107,7 @@ fndc_error:	ldi		r16, 1
 
             .global _FIND
 _FIND:		rcall	_FIND_CORE
-			;ori		ZH, FLAG_PM
+			ori		ZH, FLAG_PM
 			ret
 
 

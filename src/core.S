@@ -22,15 +22,15 @@ code_ptr:	.word   0
 ;
 ;==================
             .global readCell
-readCell:	sbrc	ZH, 7
+readCell:	sbrs	ZH, 7
 			rjmp	rc_ram
-			lpm		r16, Z+				; Z is in PM space
+			andi	ZH, 0b01111111		; Z is in PM space
+			lpm		r16, Z+
 			lpm		r17, Z+
+			ori		ZH, FLAG_PM			; restore PM flag
 			ret
-rc_ram:		andi	ZH, 0b01111111
-			ld		r16, Z+				; Z is in RAM space
+rc_ram:		ld		r16, Z+				; Z is in RAM space
 			ld		r17, Z+
-			ori		ZH, FLAG_RAM		; restore RAM flag
 			ret
 
 
@@ -44,13 +44,13 @@ rc_ram:		andi	ZH, 0b01111111
 ;
 ;==================
             .global readByte
-readByte:	sbrc	ZH, 7
+readByte:	sbrs	ZH, 7
 			rjmp	rb_ram
-			lpm		r16, Z+				; Z is in PM space
+			andi	ZH, 0b01111111		; Z is in PM space
+			lpm		r16, Z+
+			ori		ZH, FLAG_PM			; restore PM flag
 			ret
-rb_ram:		andi	ZH, 0b01111111
-			ld		r16, Z+				; Z is in RAM space
-			ori		ZH, FLAG_RAM		; restore RAM flag
+rb_ram:		ld		r16, Z+				; Z is in RAM space
 			ret
 
 
