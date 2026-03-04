@@ -11,6 +11,72 @@
 
             #include "global.inc"
 
+			.global CODE_QUERY
+CODE_QUERY:	rcall	_QUERY
+			rjmp	NEXT
+
+
+
+			.global CODE_CR
+CODE_CR:	_CR
+			rjmp	NEXT
+
+
+
+			.global CODE_PARSE
+CODE_PARSE:	rcall	getWord
+			lds		r16, word_len
+			tst		r16
+			brne	prs_isword
+			push	r16					; return code 1
+			ldi		r16, ERROR_EOL
+			push	r16
+			rjmp	NEXT
+
+prs_isword:	ldi		r17, hi8(word_buffer)
+			ldi		r16, lo8(word_buffer)
+			movw	r14, r16
+
+			clr		r17
+			lds		r16, word_len
+			rcall	_FIND
+
+			tst		isError
+			brne	prs_isnum
+
+			sts		code_ptr, ZL
+			sts		code_ptr+1, ZH
+			rcall	readCell
+			movw	ZL, r16
+
+			clr		r16					; return code 0
+			push	r16
+			push	r16
+
+			ijmp
+
+prs_isnum:	rcall	strToInt
+			tst		isError
+			brne	prs_unk
+
+			push	r17
+			push	r16
+
+			clr		r16					; return code 0
+			push	r16
+			push	r16
+
+			rjmp	NEXT
+
+prs_unk:	clr		r16					; return code 2
+			push	r16
+			ldi		r16, ERROR_UNKWORD
+			push	r16
+
+			rjmp	NEXT
+
+
+
 			; ( *chars len -- d-addr )
             .global CODE_FIND
 CODE_FIND:	pop		r16					; len

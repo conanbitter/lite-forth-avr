@@ -17,7 +17,7 @@
 			WORD_SIZE      = 32
 
 			_EMIT  = uartPutc
-			_INPUT = uartInput
+			_QUERY = uartInput
 
 .macro      sendMsg msgAddr
 			ldi		ZL, lo8(\msgAddr)

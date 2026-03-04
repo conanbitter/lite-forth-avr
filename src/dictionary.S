@@ -80,7 +80,9 @@ WORD_\name :.word	prev_word
 
 ;=========== ASMWORDS
 
-            asmword	EXIT,    "EXIT"
+            asmword	PARSE,   "PARSE"
+			asmword QUERY,   "QUERY"
+			asmword	EXIT,    "EXIT"
 			asmword FIND,    "FIND"
 			asmword TCFA,    ">CFA"
 			asmword KEY,     "KEY"
@@ -113,6 +115,20 @@ WORD_\name :.word	prev_word
 			asmword SUB,     "-"
 			asmword EQ,      "="
 			asmword NEQ,     "<>"
+			asmword	CR,      "CR"
+
+			forthword INTERPRET, "INTERPRET"
+1:			pword	PARSE
+			pword	QDUP
+			pzbr	1b
+			pword	ERRTST
+			pword	EXIT
+
+			forthword QUIT, "QUIT"
+1:			pword	QUERY
+			pword	INTERPRET
+			pword	CR
+			pbr		1b
 
 			forthword DOUBLE, "DOUBLE"
 			pword	DUP
