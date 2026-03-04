@@ -59,4 +59,12 @@
 			.endif
 .endm
 
+			; ERROR CODES
+
+			ERROR_NOERR   = 0
+			ERROR_EOL     = 1
+			ERROR_UNKWORD = 2
+			ERROR_GENERAL = 3
+			ERROR_WORDEXP = 4
+
 #endif
