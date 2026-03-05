@@ -15,7 +15,8 @@ CODE_ERRTST:
 
 et_1:		cpi		r16, ERROR_EOL		; 1 - input buffer is empty (End Of Line)
 			brne	et_other			; print " ok"
-			tst		isCompiling
+			lds		r17, VAR_STATE
+			tst		r17
 			brne	et_1e
 			sendMsg	MSG_OK
 et_1e:		rjmp	NEXT

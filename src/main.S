@@ -28,12 +28,18 @@ main:
 			ldi		XL, lo8(RAMEND-RSTACK_SIZE)
 			ldi		XH, hi8(RAMEND-RSTACK_SIZE)
 
+			; init variables
 			clr		r16
 			sts		VAR_ERRCODE, r16
 			sts		VAR_ERRCODE+1, r16
+			sts		VAR_STATE, r16
+			sts		VAR_STATE+1, r16
+			ldi		r16, lo8(HERE_START)
+			sts		VAR_HERE, r16
+			ldi		r16, hi8(HERE_START)
+			sts		VAR_HERE+1, r16
 
             clr		isError
-			clr		isCompiling
 
 			rcall	uartInit
 			sendMsg	MSG_LOGO

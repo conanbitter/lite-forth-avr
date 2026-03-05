@@ -12,6 +12,11 @@ code_ptr:	.word   0
 			.global VAR_ERRCODE
 VAR_ERRCODE:.word   0
 
+			.global VAR_STATE
+VAR_STATE:	.word   0
+
+			.global VAR_HERE
+VAR_HERE:	.word   0
 			.text
 
 

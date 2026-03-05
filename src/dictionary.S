@@ -147,6 +147,8 @@ CODE_\name:	ldi		r16, hi8(VAR_\name)
 			asmword FETCH,   "@"
 
 			varword ERRCODE, "ERRCODE"
+			varword STATE, "STATE"
+			varword HERE, "HERE"
 
 			forthword INTERPRET, "INTERPRET"
 1:			pword	PARSE

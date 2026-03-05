@@ -3,7 +3,6 @@
 			#include "m328Pdef.inc"
 
 			#define isError     r2
-			#define isCompiling r3
 
             RSTACK_SIZE    = 32 * 2
 			STACK_BOTTOM   = RAMEND-RSTACK_SIZE-1
