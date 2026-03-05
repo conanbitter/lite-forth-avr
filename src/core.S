@@ -9,6 +9,9 @@ word_ptr:	.word   0
 			.global code_ptr
 code_ptr:	.word   0
 
+			.global VAR_ERRCODE
+VAR_ERRCODE:.word   0
+
 			.text
 
 

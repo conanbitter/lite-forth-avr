@@ -28,9 +28,8 @@ CODE_PARSE:	rcall	getWord
 			lds		r16, word_len
 			tst		r16
 			brne	prs_isword
-			push	r16					; return code 1
-			ldi		r16, ERROR_EOL
-			push	r16
+			ldi		r16, ERROR_EOL		; return code 1
+			sts		VAR_ERRCODE, r16
 			rjmp	NEXT
 
 prs_isword:	ldi		r17, hi8(word_buffer)
@@ -50,8 +49,7 @@ prs_isword:	ldi		r17, hi8(word_buffer)
 			movw	ZL, r16
 
 			clr		r16					; return code 0
-			push	r16
-			push	r16
+			sts		VAR_ERRCODE, r16
 
 			ijmp
 
@@ -63,15 +61,12 @@ prs_isnum:	rcall	strToInt
 			push	r16
 
 			clr		r16					; return code 0
-			push	r16
-			push	r16
+			sts		VAR_ERRCODE, r16
 
 			rjmp	NEXT
 
-prs_unk:	clr		r16					; return code 2
-			push	r16
-			ldi		r16, ERROR_UNKWORD
-			push	r16
+prs_unk:	ldi		r16, ERROR_UNKWORD	; return code 2
+			sts		VAR_ERRCODE, r16
 
 			rjmp	NEXT
 
@@ -655,5 +650,19 @@ CODE_NEQ_NOT:
 CODE_NEQ_END:
 			push	AL
 			push	AL
+
+			rjmp	NEXT
+
+
+			; ( addr -- n )
+			.global CODE_FETCH
+CODE_FETCH:	pop		YL
+			pop		YH
+
+			ld		r16, Y+
+			ld		r17, Y
+
+			push	r17
+			push	r16
 
 			rjmp	NEXT

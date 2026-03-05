@@ -48,6 +48,34 @@ WORD_\name :.word	prev_word
 
 
 
+			.macro  varword name, text, flags=0
+
+			.global	WORD_\name
+			.type	WORD_\name ,@object
+			.align	1
+WORD_\name :.word	prev_word
+			.set	prev_word, WORD_\name
+			.byte	(2f - 1f) | \flags
+1:			.ascii	"\text"
+2:			.ifeq (2b - 1b) % 2
+			.byte 2b - 1b
+			.else
+			.byte 0
+			.byte 2b - 1b + 1
+			.endif
+            .global	\name
+			.type	\name ,@object
+\name :		.word	pm(CODE_\name)
+CODE_\name:	ldi		r16, hi8(VAR_\name)
+			push	r16
+			ldi		r16, lo8(VAR_\name)
+			push	r16
+			rjmp	NEXT
+
+			.endm
+
+
+
 			.macro	pword name arg
 			.word	\name + FLAG_PM16
 			.ifnb	\arg
@@ -116,9 +144,14 @@ WORD_\name :.word	prev_word
 			asmword EQ,      "="
 			asmword NEQ,     "<>"
 			asmword	CR,      "CR"
+			asmword FETCH,   "@"
+
+			varword ERRCODE, "ERRCODE"
 
 			forthword INTERPRET, "INTERPRET"
 1:			pword	PARSE
+			pword	ERRCODE
+			pword	FETCH
 			pword	QDUP
 			pzbr	1b
 			pword	ERRTST

@@ -28,6 +28,10 @@ main:
 			ldi		XL, lo8(RAMEND-RSTACK_SIZE)
 			ldi		XH, hi8(RAMEND-RSTACK_SIZE)
 
+			clr		r16
+			sts		VAR_ERRCODE, r16
+			sts		VAR_ERRCODE+1, r16
+
             clr		isError
 			clr		isCompiling
 
