@@ -11,6 +11,8 @@
 
             #include "global.inc"
 
+			.text
+
 			.global CODE_QUERY
 CODE_QUERY:	rcall	_QUERY
 			rjmp	NEXT

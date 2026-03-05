@@ -2,8 +2,6 @@
 
 			.text
 
-			
-
 			.global	CODE_ERRTST
 CODE_ERRTST:
 			pop		r16

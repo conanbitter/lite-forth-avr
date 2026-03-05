@@ -7,7 +7,7 @@
 
 ; =========== RAM ============
 
-			.section .noinit
+			.data
 var_S0:		.word   0
 
 ; ========== CODE ============

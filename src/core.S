@@ -1,7 +1,7 @@
             #include "m328Pdef.inc"
 			#include "global.inc"
 
-			.section .noinit
+			.data
 
 			.global word_ptr
 word_ptr:	.word   0

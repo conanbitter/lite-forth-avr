@@ -66,7 +66,7 @@ $(BUILD_DIR)/debug:
 build: $(BUILD_DIR)/$(PROJECT).hex
 
 $(BUILD_DIR)/$(PROJECT).hex: $(BUILD_DIR)/release/$(PROJECT).elf
-	$(OBJCOPY) -j .text -j .data -O ihex $< $(BUILD_DIR)/$(PROJECT).hex
+	$(OBJCOPY) -j .text -O ihex $< $(BUILD_DIR)/$(PROJECT).hex
 
 $(BUILD_DIR)/release/$(PROJECT).elf: $(OBJS)
 	$(LINKER) $(OBJS) -o $@ $(LDFLAGS)

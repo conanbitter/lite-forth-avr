@@ -1,6 +1,6 @@
 			#include "global.inc"
 
-			.section .noinit
+			.data
 
 			.global line_buffer
 			.global	line_end

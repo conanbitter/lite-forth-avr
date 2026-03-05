@@ -1,5 +1,7 @@
 			#include "global.inc"
 
+			.text
+
 ;================== div16u
 ;
 ; [R17:R16] = [R17:R16] / [R19:R18]
