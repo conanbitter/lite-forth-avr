@@ -17,9 +17,12 @@ VAR_STATE:	.word   0
 
 			.global VAR_HERE
 VAR_HERE:	.word   0
+
+			.global VAR_LATEST
+VAR_LATEST:	.word	0
+
+
 			.text
-
-
 
 ;================== readCell
 ;

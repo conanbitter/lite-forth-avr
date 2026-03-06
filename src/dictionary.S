@@ -48,14 +48,14 @@ WORD_\name :.word	prev_word
 
 
 
-			.macro  varword name, text, flags=0
+			.macro  varword name, text
 
 			.global	WORD_\name
 			.type	WORD_\name ,@object
 			.align	1
 WORD_\name :.word	prev_word
 			.set	prev_word, WORD_\name
-			.byte	(2f - 1f) | \flags
+			.byte	2f - 1f
 1:			.ascii	"\text"
 2:			.ifeq (2b - 1b) % 2
 			.byte 2b - 1b
@@ -73,6 +73,34 @@ CODE_\name:	ldi		r16, hi8(VAR_\name)
 			rjmp	NEXT
 
 			.endm
+
+
+
+			.macro  constword name, text, value
+
+			.global	WORD_\name
+			.type	WORD_\name ,@object
+			.align	1
+WORD_\name :.word	prev_word
+			.set	prev_word, WORD_\name
+			.byte	2f - 1f
+1:			.ascii	"\text"
+2:			.ifeq (2b - 1b) % 2
+			.byte 2b - 1b
+			.else
+			.byte 0
+			.byte 2b - 1b + 1
+			.endif
+            .global	\name
+			.type	\name ,@object
+\name :		.word	pm(CODE_\name)
+CODE_\name:	ldi		r16, hi8(\value)
+			push	r16
+			ldi		r16, lo8(\value)
+			push	r16
+			rjmp	NEXT
+
+			.endm			
 
 
 
@@ -149,6 +177,9 @@ CODE_\name:	ldi		r16, hi8(VAR_\name)
 			varword ERRCODE, "ERRCODE"
 			varword STATE, "STATE"
 			varword HERE, "HERE"
+			varword LATEST, "LATEST"
+
+			constword GETDOCOL, "DOCOL", pm(CODE_DOCOL)
 
 			forthword INTERPRET, "INTERPRET"
 1:			pword	PARSE
