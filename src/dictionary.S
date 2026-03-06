@@ -136,7 +136,11 @@ CODE_\name:	ldi		r16, hi8(\value)
 
 ;=========== ASMWORDS
 
-            asmword	PARSE,   "PARSE"
+            asmword	CREATE,  "CREATE"
+			asmword	COMMA,   ","
+			asmword	LBRAC,   "["
+			asmword	RBRAC,   "]"
+			asmword	PARSE,   "PARSE"
 			asmword QUERY,   "QUERY"
 			asmword	EXIT,    "EXIT"
 			asmword FIND,    "FIND"
@@ -196,6 +200,22 @@ CODE_\name:	ldi		r16, hi8(\value)
 			pword	CR
 			pbr		1b
 
+			forthword COLON, ":"
+			pword	CREATE
+			pconst	pm(CODE_DOCOL)
+			pword	COMMA
+			;make hidden
+			pword	RBRAC
+			pword	EXIT
+
+			forthword SEMICOLON, ";"
+			pconst	EXIT + FLAG_PM16
+			pword	COMMA
+			;remove hidden
+			pword	LBRAC
+			pword	EXIT
+
+/*
 			forthword DOUBLE, "DOUBLE"
 			pword	DUP
 			pword	ADD
@@ -220,7 +240,7 @@ CODE_\name:	ldi		r16, hi8(\value)
 			pword	DUP
 			pzbr	2f
 			pbr		1b
-2:			pword	EXIT
+2:			pword	EXIT*/
 
 			.global LAST_CORE
 			.type	LAST_CORE, @object

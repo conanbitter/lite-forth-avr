@@ -13,6 +13,85 @@
 
 			.text
 
+			.global	CODE_CREATE
+CODE_CREATE:rcall	getWord
+			lds		YL, VAR_HERE		; load userdata pointer to Y
+			lds		YH, VAR_HERE+1
+			movw	r16, YL				; keep start of the word
+
+			lds		r18, VAR_LATEST		; save pointer to previous word
+			st		Y+, r18
+			lds		r18, VAR_LATEST+1
+			st		Y+, r18
+			sts		VAR_LATEST, r16		; update LATEST
+			sts		VAR_LATEST+1, r17
+
+			lds		r16, word_len		; save word length (clean)
+			st		Y+, r16
+
+			ldi		ZL, lo8(word_buffer)
+			ldi		ZH, hi8(word_buffer)
+1:			ld		r16, Z+
+			tst		r16
+			breq	2f
+			st		Y+, r16
+			rjmp	1b
+
+2:			lds		r16, word_len		; save word length (padded)
+			sbrs	r16, 0
+			rjmp	3f
+			subi	r16, -1
+			clr		r17
+			st		Y+, r17
+3:			st		Y+, r16
+
+			sts		VAR_HERE, YL		; update HERE
+			sts		VAR_HERE+1, YH
+
+			rjmp	NEXT
+
+
+
+			.global	CODE_COMMA
+CODE_COMMA:	pop		r16
+			pop		r17
+
+			rcall	_COMMA
+
+			rjmp	NEXT
+
+
+_COMMA:		lds		YL, VAR_HERE		; load userdata pointer to Y
+			lds		YH, VAR_HERE+1
+
+			st		Y+, r16
+			st		Y+, r17
+
+			sts		VAR_HERE, YL		; update HERE
+			sts		VAR_HERE+1, YH
+
+			ret
+
+
+
+			.global	CODE_LBRAC
+CODE_LBRAC:	clr		r16
+			sts		VAR_STATE, r16
+			sts		VAR_STATE+1, r16
+
+			rjmp NEXT
+
+
+
+			.global	CODE_RBRAC
+CODE_RBRAC:	ldi		r16, 0xFF
+			sts		VAR_STATE, r16
+			sts		VAR_STATE+1, r16
+
+			rjmp NEXT
+
+
+
 			.global CODE_QUERY
 CODE_QUERY:	rcall	_QUERY
 			rjmp	NEXT
