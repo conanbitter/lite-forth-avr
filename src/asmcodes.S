@@ -94,6 +94,21 @@ CODE_RBRAC:	ldi		r16, 0xFF
 
 
 
+			.global	CODE_HIDDEN
+CODE_HIDDEN:pop		YL
+			pop		YH
+			adiw	YL, 2
+			ld		r16, Y
+			sbrc	r16, 5
+			rjmp	ch_clear
+			ori		r16, FLAG_HIDDEN
+			rjmp	ch_end
+ch_clear:	andi	r16, ~FLAG_HIDDEN
+ch_end:		st		Y, r16
+			rjmp	NEXT
+
+
+
 			.global CODE_QUERY
 CODE_QUERY:	rcall	_QUERY
 			rjmp	NEXT

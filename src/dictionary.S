@@ -140,6 +140,7 @@ CODE_\name:	ldi		r16, hi8(\value)
 			asmword	COMMA,   ","
 			asmword	LBRAC,   "[",       FLAG_IMMEDIATE
 			asmword	RBRAC,   "]"
+			asmword	HIDDEN,  "HIDDEN"
 			asmword	PARSE,   "PARSE"
 			asmword QUERY,   "QUERY"
 			asmword	EXIT,    "EXIT"
@@ -204,14 +205,18 @@ CODE_\name:	ldi		r16, hi8(\value)
 			pword	CREATE
 			pconst	pm(CODE_DOCOL)
 			pword	COMMA
-			;make hidden
+			pword	LATEST
+			pword	FETCH
+			pword	HIDDEN
 			pword	RBRAC
 			pword	EXIT
 
 			forthword SEMICOLON, ";", FLAG_IMMEDIATE
 			pconst	EXIT + FLAG_PM16
 			pword	COMMA
-			;remove hidden
+			pword	LATEST
+			pword	FETCH
+			pword	HIDDEN
 			pword	LBRAC
 			pword	EXIT
 
