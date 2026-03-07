@@ -138,7 +138,7 @@ CODE_\name:	ldi		r16, hi8(\value)
 
             asmword	CREATE,  "CREATE"
 			asmword	COMMA,   ","
-			asmword	LBRAC,   "["
+			asmword	LBRAC,   "[",       FLAG_IMMEDIATE
 			asmword	RBRAC,   "]"
 			asmword	PARSE,   "PARSE"
 			asmword QUERY,   "QUERY"
@@ -208,7 +208,7 @@ CODE_\name:	ldi		r16, hi8(\value)
 			pword	RBRAC
 			pword	EXIT
 
-			forthword SEMICOLON, ";"
+			forthword SEMICOLON, ";", FLAG_IMMEDIATE
 			pconst	EXIT + FLAG_PM16
 			pword	COMMA
 			;remove hidden

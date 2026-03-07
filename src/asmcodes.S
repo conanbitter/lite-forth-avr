@@ -61,7 +61,8 @@ CODE_COMMA:	pop		r16
 			rjmp	NEXT
 
 
-_COMMA:		lds		YL, VAR_HERE		; load userdata pointer to Y
+_COMMA:		save	YL, YH
+			lds		YL, VAR_HERE		; load userdata pointer to Y
 			lds		YH, VAR_HERE+1
 
 			st		Y+, r16
@@ -70,6 +71,7 @@ _COMMA:		lds		YL, VAR_HERE		; load userdata pointer to Y
 			sts		VAR_HERE, YL		; update HERE
 			sts		VAR_HERE+1, YH
 
+			restore	YL, YH
 			ret
 
 
@@ -106,6 +108,7 @@ CODE_CR:	_CR
 
 			.global CODE_PARSE
 CODE_PARSE:	rcall	getWord
+			lds		r5, VAR_STATE
 			lds		r16, word_len
 			tst		r16
 			brne	prs_isword
@@ -124,25 +127,53 @@ prs_isword:	ldi		r17, hi8(word_buffer)
 			tst		isError
 			brne	prs_isnum
 
-			sts		code_ptr, ZL
+			clr		r16					; return code 0
+			sts		VAR_ERRCODE, r16
+
+			tst		r5					; is compile mode
+			breq	prs_wint
+			movw	r6, ZL				; save CFA
+			rcall	_TWHA				; ged immed flag
+			adiw	ZL, 2				; skip prev link
+			
+			rcall	readByte
+			andi	r16, FLAG_IMMEDIATE
+			breq	prs_wcomp
+			movw	ZL, r6				; restore CFA
+
+prs_wint:	sts		code_ptr, ZL		; run word
 			sts		code_ptr+1, ZH
 			rcall	readCell
 			movw	ZL, r16
 
-			clr		r16					; return code 0
-			sts		VAR_ERRCODE, r16
-
 			ijmp
+
+prs_wcomp:	movw	r16, r6				; write CFA
+			rcall	_COMMA
+			rjmp	NEXT
 
 prs_isnum:	rcall	strToInt
 			tst		isError
 			brne	prs_unk
 
-			push	r17
-			push	r16
+			clr		r15					; return code 0
+			sts		VAR_ERRCODE, r15
+			
+			tst		r5					; is compile mode
+			breq	prs_wint
 
-			clr		r16					; return code 0
-			sts		VAR_ERRCODE, r16
+prs_ncomp:	movw	r6, r16				; save number
+
+			ldi		r16, lo8(LIT)		; write LIT
+			ldi		r17, hi8(LIT)
+			rcall	_COMMA
+
+			movw	r16, r6				; write number
+			rcall	_COMMA
+			rjmp	NEXT
+
+prs_nint:	push	r17					; run number
+			push	r16
 
 			rjmp	NEXT
 
