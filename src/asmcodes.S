@@ -109,6 +109,21 @@ ch_end:		st		Y, r16
 
 
 
+			.global	CODE_IMMEDIATE
+CODE_IMMEDIATE:
+			lds		YL, VAR_LATEST
+			lds		YH, VAR_LATEST+1
+			adiw	YL, 2
+			ld		r16, Y
+			sbrc	r16, 7
+			rjmp	ci_clear
+			ori		r16, FLAG_IMMEDIATE
+			rjmp	ci_end
+ci_clear:	andi	r16, ~FLAG_IMMEDIATE
+ci_end:		st		Y, r16
+			rjmp	NEXT
+
+
 			.global CODE_QUERY
 CODE_QUERY:	rcall	_QUERY
 			rjmp	NEXT
