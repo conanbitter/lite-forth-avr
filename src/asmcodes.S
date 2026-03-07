@@ -175,13 +175,13 @@ prs_isnum:	rcall	strToInt
 			sts		VAR_ERRCODE, r15
 			
 			tst		r5					; is compile mode
-			breq	prs_wint
+			breq	prs_nint
 
 prs_ncomp:	movw	r6, r16				; save number
 
-			ldi		r16, lo8(LIT)		; write LIT
-			ldi		r17, hi8(LIT)
-			rcall	_COMMA
+			ldi		r16, lo8(LIT + FLAG_PM16)
+			ldi		r17, hi8(LIT + FLAG_PM16)
+			rcall	_COMMA				; write LIT
 
 			movw	r16, r6				; write number
 			rcall	_COMMA
@@ -231,7 +231,7 @@ CODE_FIND:	pop		r16					; len
 			#define fndcDChar      r21
 			#define fndcTmp        r16
 
-_FIND_CORE:	save	r18, r19, r20, r21, YL, YH
+_FIND_CORE:	save	r14, r15, r16, r17, r18, r19, r20, r21, YL, YH
 			tst		fndcWordLenH
 			brne	fndc_error
 
@@ -279,14 +279,90 @@ fndc_found:	sbrc	fndcWordLenL, 0
 			;sub		ZL, fndcTmp
 			;sbci	ZL, 3				; - sizeof(prev) - sizeof(right_len)
 			clr		isError
-			restore	r18, r19, r20, r21, YL, YH
+			restore	r14, r15, r16, r17, r18, r19, r20, r21, YL, YH
 			ret
 
 fndc_error:	ldi		r16, 1
 			mov		isError, r16
 			clr		ZL
 			clr		ZH
-			restore	r18, r19, r20, r21, YL, YH
+			restore	r14, r15, r16, r17, r18, r19, r20, r21, YL, YH
+			ret
+
+
+
+;================== _FIND_RAM
+;
+; in [r15:r14] - address of the string
+;    [r17:r16] - 16 bit length of the string
+;
+; out Z - d-addr of the found word or 0
+;
+;==================
+
+			#define fndrWordPtrL   r14
+			#define fndrWordLenL   r16
+			#define fndrWordLenH   r17
+			#define fndrDWordLen   r17
+			#define fndrNextDWordL r18
+			#define fndrNextDWordH r19
+			#define fndrIChar      r20
+			#define fndrDChar      r21
+			#define fndrTmp        r16
+
+_FIND_RAM:	save	r14, r15, r16, r17, r18, r19, r20, r21, YL, YH
+			tst		fndrWordLenH
+			brne	fndr_error
+
+			lds		ZL, VAR_LATEST
+			lds		ZH,	VAR_LATEST+1
+
+fndr_wl:	ld		fndrNextDWordL, Z+ 	; next word
+			ld		fndrNextDWordH, Z+
+			ld		fndrDWordLen, Z+
+
+			andi	fndrDWordLen, LENGTH_MASK | FLAG_HIDDEN
+			cp		fndrWordLenL, fndrDWordLen
+			brne	fndr_next
+
+			movw	YL, fndrWordPtrL
+
+fndr_chl:	ld		fndrIChar, Y+
+			ld		fndrDChar, Z+
+
+			cp		fndrIChar, fndrDChar
+			brne	fndr_next
+
+			dec		fndrDWordLen
+			tst		fndrDWordLen
+			breq	fndr_found
+
+			rjmp	fndr_chl
+
+fndr_next:	tst		fndrNextDWordL
+			brne	fndr_next2
+
+			tst		fndrNextDWordH
+			breq	fndr_error
+
+fndr_next2:	movw	ZL, fndrNextDWordL
+			rjmp	fndr_wl
+
+fndr_found:	sbrc	fndrWordLenL, 0
+			adiw	ZL, 1
+			adiw	ZL, 1
+			;lpm		fndcTmp, Z
+			;sub		ZL, fndcTmp
+			;sbci	ZL, 3				; - sizeof(prev) - sizeof(right_len)
+			clr		isError
+			restore	r14, r15, r16, r17, r18, r19, r20, r21, YL, YH
+			ret
+
+fndr_error:	ldi		r16, 1
+			mov		isError, r16
+			clr		ZL
+			clr		ZH
+			restore	r14, r15, r16, r17, r18, r19, r20, r21, YL, YH
 			ret
 
 
@@ -294,7 +370,12 @@ fndc_error:	ldi		r16, 1
 ;================== _FIND
 
             .global _FIND
-_FIND:		rcall	_FIND_CORE
+_FIND:		rcall	_FIND_RAM
+			tst		isError
+			brne	1f
+			ret
+
+1:			rcall	_FIND_CORE
 			ori		ZH, FLAG_PM
 			ret
 
