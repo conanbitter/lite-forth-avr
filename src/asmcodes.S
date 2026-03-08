@@ -391,8 +391,10 @@ _FIND:		rcall	_FIND_RAM
 			ret
 
 1:			rcall	_FIND_CORE
+			tst		isError
+			brne	2f
 			ori		ZH, FLAG_PM
-			ret
+2:			ret
 
 
 
@@ -525,7 +527,8 @@ CODE_WORD:	rcall	getWord
 
 			clr		AL
 			push	AL
-			push	r19
+			lds		AL, word_len
+			push	AL
 
 			rjmp	NEXT
 
