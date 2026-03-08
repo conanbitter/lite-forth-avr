@@ -2,7 +2,7 @@
 
 ;=========== MACROS
 
-			.macro  asmword name, text, flags=0
+			.macro  asmword name, text, flags=0, code
 
 			.global	WORD_\name
 			.type	WORD_\name ,@object
@@ -19,7 +19,11 @@ WORD_\name :.word	prev_word
 			.endif
             .global	\name
 			.type	\name ,@object
-\name :		.word	pm(CODE_\name)
+\name :		.ifnb	\code
+			.word	pm(\code)
+			.else
+			.word	pm(CODE_\name)
+			.endif
 
 			.endm
 
@@ -181,6 +185,8 @@ CODE_\name:	ldi		r16, hi8(\value)
 			asmword NEQ,       "<>"
 			asmword	CR,        "CR"
 			asmword FETCH,     "@"
+
+			asmword	CELLS,     "CELLS", 0, CODE_MUL2
 
 			varword ERRCODE, "ERRCODE"
 			varword STATE, "STATE"
