@@ -176,6 +176,8 @@ CODE_\name:	ldi		r16, hi8(\value)
 			asmword ADD,       "+"
 			asmword SUB,       "-"
 			asmword EQ,        "="
+			asmword	MUL2,      "2*"
+			asmword	DIV2,      "2/"
 			asmword NEQ,       "<>"
 			asmword	CR,        "CR"
 			asmword FETCH,     "@"

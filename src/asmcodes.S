@@ -828,6 +828,33 @@ CODE_SUB:	pop		BL
 			rjmp	NEXT
 
 
+			; ( n -- n*2 )
+			.global	CODE_MUL2
+CODE_MUL2:	pop		AL
+			pop		AH
+
+			lsl		AL
+			rol		AH
+
+			push	AH
+			push	AL
+
+			rjmp	NEXT
+
+
+			; ( n -- n/2 )
+			.global	CODE_DIV2
+CODE_DIV2:	pop		AL
+			pop		AH
+
+			asr		AH
+			ror		AL
+
+			push	AH
+			push	AL
+
+			rjmp	NEXT
+
 			; ( n1 n2 -- n1==n2 )
             .global CODE_EQ
 CODE_EQ:	pop		BL
