@@ -36,10 +36,13 @@ main:
 			sts		VAR_STATE+1, r16
 			sts		VAR_LATEST, r16
 			sts		VAR_LATEST+1, r16
+			sts		VAR_BASE+1, r16
 			ldi		r16, lo8(HERE_START)
 			sts		VAR_HERE, r16
 			ldi		r16, hi8(HERE_START)
 			sts		VAR_HERE+1, r16
+			ldi		r16, 10
+			sts		VAR_BASE, r16
 
             clr		isError
 

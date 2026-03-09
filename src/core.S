@@ -21,6 +21,9 @@ VAR_HERE:	.word   0
 			.global VAR_LATEST
 VAR_LATEST:	.word	0
 
+			.global VAR_BASE
+VAR_BASE:	.word	0
+
 
 			.text
 

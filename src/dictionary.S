@@ -185,6 +185,7 @@ CODE_\name:	ldi		r16, hi8(\value)
 			asmword NEQ,       "<>"
 			asmword	CR,        "CR"
 			asmword FETCH,     "@"
+			asmword STORE,     "!"
 
 			asmword	CELLS,     "CELLS", 0, CODE_MUL2
 
@@ -192,6 +193,7 @@ CODE_\name:	ldi		r16, hi8(\value)
 			varword STATE, "STATE"
 			varword HERE, "HERE"
 			varword LATEST, "LATEST"
+			varword BASE, "BASE"
 
 			constword GETDOCOL, "DOCOL", pm(CODE_DOCOL)
 

@@ -919,3 +919,17 @@ CODE_FETCH:	pop		YL
 			push	r16
 
 			rjmp	NEXT
+
+
+			; ( n addr -- )
+			.global CODE_STORE
+CODE_STORE:	pop		YL
+			pop		YH
+
+			pop		AL
+			pop		AH
+
+			st		Y+, AL
+			st		Y, AH
+
+			rjmp	NEXT
