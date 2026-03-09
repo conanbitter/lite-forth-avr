@@ -76,6 +76,29 @@ _COMMA:		save	YL, YH
 
 
 
+			.global	CODE_CCOMMA
+CODE_CCOMMA:pop		r16
+			pop		r17
+
+			rcall	_CCOMMA
+
+			rjmp	NEXT
+
+
+_CCOMMA:	save	YL, YH
+			lds		YL, VAR_HERE		; load userdata pointer to Y
+			lds		YH, VAR_HERE+1
+
+			st		Y+, r16
+
+			sts		VAR_HERE, YL		; update HERE
+			sts		VAR_HERE+1, YH
+
+			restore	YL, YH
+			ret
+
+
+
 			.global	CODE_LBRAC
 CODE_LBRAC:	clr		r16
 			sts		VAR_STATE, r16
@@ -912,11 +935,11 @@ CODE_NEQ_END:
 CODE_FETCH:	pop		YL
 			pop		YH
 
-			ld		r16, Y+
-			ld		r17, Y
+			ld		AL, Y+
+			ld		AH, Y
 
-			push	r17
-			push	r16
+			push	AH
+			push	AL
 
 			rjmp	NEXT
 
@@ -931,5 +954,32 @@ CODE_STORE:	pop		YL
 
 			st		Y+, AL
 			st		Y, AH
+
+			rjmp	NEXT
+
+
+			; ( addr -- n )
+			.global CODE_CFETCH
+CODE_CFETCH:pop		YL
+			pop		YH
+
+			ld		AL, Y
+			clr		AH
+
+			push	AH
+			push	AL
+
+			rjmp	NEXT
+
+
+			; ( n addr -- )
+			.global CODE_CSTORE
+CODE_CSTORE:pop		YL
+			pop		YH
+
+			pop		AL
+			pop		AH
+
+			st		Y, AL
 
 			rjmp	NEXT

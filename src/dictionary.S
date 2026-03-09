@@ -142,6 +142,7 @@ CODE_\name:	ldi		r16, hi8(\value)
 
             asmword	CREATE,    "CREATE"
 			asmword	COMMA,     ","
+			asmword	CCOMMA,    "C,"
 			asmword	LBRAC,     "[",         FLAG_IMMEDIATE
 			asmword	RBRAC,     "]"
 			asmword	HIDDEN,    "HIDDEN"
@@ -186,6 +187,8 @@ CODE_\name:	ldi		r16, hi8(\value)
 			asmword	CR,        "CR"
 			asmword FETCH,     "@"
 			asmword STORE,     "!"
+			asmword CFETCH,    "C@"
+			asmword CSTORE,    "C!"
 
 			asmword	CELLS,     "CELLS", 0, CODE_MUL2
 
