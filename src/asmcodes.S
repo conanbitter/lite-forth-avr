@@ -244,10 +244,13 @@ CODE_FIND:	pop		r16					; len
 			pop		r14					; char pointer
 			pop		r15
 			rcall	_FIND
+			tst		isError
+			brne	1f
 			rcall	_TWHA
-			push	ZH
+1:			push	ZH
 			push	ZL
 
+			rjmp	NEXT
 
 
 ;================== _FIND_CORE
